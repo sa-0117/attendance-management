@@ -1,0 +1,42 @@
+@extends('layouts.app')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/list.css') }}">
+<link rel="stylesheet" href="{{ asset('css/request.css') }}">
+@endsection
+
+@section('content')
+    <div class="attendance-list">
+        <div class="attendance-list__inner">
+            <div class="attendance-list__heading">
+                <h1>申請一覧</h1>
+            </div>
+            <div class="border">
+                <ul class="border__list">
+                    <li><a href="">承認待ち</a></li>
+                    <li><a href="">承認済み</a></li>
+                </ul>
+            </div>
+            <table class="attendance-list-table">
+                <tr class="table__row">
+                    <th class="table__label">状態</th>
+                    <th class="table__label">名前</th>
+                    <th class="table__label">対象日時</th>
+                    <th class="table__label">申請理由</th>
+                    <th class="table__label">申請日時</th>
+                    <th class="table__label">詳細</th>
+                </tr>
+                <tr class="table__row">
+                    <td class="table__data"></td>
+                    <td class="table__data"></td>
+                    <td class="table__data"></td>
+                    <td class="table__data"></td>
+                    <td class="table__data"></td>
+                    <td class="table__data">
+                        <a class="table__detail-button" href="">詳細</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+@endsection

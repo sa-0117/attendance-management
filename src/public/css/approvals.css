@@ -1,0 +1,72 @@
+.attendance-list {
+    width: 70%;
+    margin: 0 auto;
+}
+
+.attendance-list__inner {
+    margin: 40px;
+}
+
+.attendance-list__heading h2 {
+    padding-left: 15px;
+    border-left: 5px solid #000;
+}
+
+.detail-form__table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+}
+
+.detail-form__row {
+    display: flex;
+    border: 1px solid #E0DFDE;
+    background: #fff;
+}
+
+.detail-form__label,
+.detail-form__data {
+    padding: 30px 58px;
+}
+
+.detail-form__label {
+    width: 30%;
+    box-sizing: border-box;
+    color: #6d6d6d;
+    text-align: left;
+    font-weight: 400;
+}
+
+.detail-form__data {
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    color: #000;
+}
+
+.detail-form__data input,
+.detail-form__data textarea {
+    width: 100px;
+    border-radius: 3px;
+    border: 1px solid #6d6d6d;
+    opacity: 0.8;
+}
+
+.detail-form__data input,
+.detail-form__data textarea {
+    border: none;
+}
+
+.form__button {
+    text-align: right;
+    margin: 32px 0;
+}
+
+.form__button-approvals {
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: #000;
+    color: #FFF;
+    padding: 10px 20px;
+}
