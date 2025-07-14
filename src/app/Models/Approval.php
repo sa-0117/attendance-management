@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Approvals extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'status',
+    ];
+
+    public function attendances() {
+	    return $this->belongsTo(Attendance::class);
+}
+
 }

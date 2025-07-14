@@ -7,6 +7,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -14,6 +15,8 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use App\Models\User;
+use App\Models\Admin;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -43,6 +46,23 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(function () {
             return view('auth.login');
         });
+
+        Fortify::authenticateUsing(function (Request $request) {
+            if ($request->is('admin/*')) {
+                $admin = Admin::where('email', $request->email)->first();
+                if ($admin && Hash::check($request->password, $admin->password)) {
+                    Auth::guard('admin')->login($admin, $request->remenber);
+                    return $admin;
+                }
+            } else {
+                $user = User::where('email', $request->email)->first();
+                if($user && Hash::check($request->password, $user->password)) {
+                    Auth::guard('user')->login($user, $request->remember);
+                    return $user;
+                }
+            }
+                return null;
+            });
             
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;

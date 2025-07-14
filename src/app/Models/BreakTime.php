@@ -7,5 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class BreakTime extends Model
 {
-    use HasFactory;
+        protected $fillable = [
+        'break_start',
+        'break_end',
+    ];
+
+    public function attendances() {
+	    return $this->belongsTo(Attendance::class);
+    }
 }
