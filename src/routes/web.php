@@ -24,7 +24,14 @@ Route::get('admin/login', [LoginController::class, 'showAdminLoginForm']);
 Route::get('/admin/users/attendances',[UserController::class,'staff']);//修正必要!/admin/users/{user}/attendances メソッドも
 Route::get('/admin/users',[UserController::class,'show']);
 
-Route::get('/attendance',[AttendanceController::class,'create']);
+//！！修正中！！Route::get('/attendance',[AttendanceController::class,'create']);
+Route::get('/attendance',[AttendanceController::class,'showAttendanceStatus'])->name('attendance.form');
+Route::post('/attendance/start',[AttendanceController::class,'startWork'])->name('attendance.start');
+Route::post('/attendance/end',[AttendanceController::class,'endWork'])->name('attendance.end');
+Route::post('/break/start',[AttendanceController::class,'startBreak'])->name('break.start');
+Route::post('/break/end',[AttendanceController::class,'endBreak'])->name('break.end');
+
+
 Route::get('/attendance/list',[AttendanceController::class,'index']);
 Route::get('/attendance/detail',[AttendanceController::class,'show']);//修正必要!/attendance/detail/{id}
 Route::get('/stamp_correction_request/list',[AttendanceController::class,'request']);//メソッド名修正必要
@@ -36,5 +43,5 @@ Route::get('/admin/requests/approvals',[AdminController::class,'approvals']);//�
 
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/');
+    return redirect('/login');
 })->name('logout');

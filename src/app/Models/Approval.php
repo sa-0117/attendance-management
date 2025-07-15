@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Approvals extends Model
 {
     protected $fillable = [
+        'attendance_id',
         'status',
     ];
 

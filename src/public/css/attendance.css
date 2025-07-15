@@ -35,10 +35,26 @@
 }
 
 .form__button-attendance {
-    border: 1px solid #000;
+    border: none;
     border-radius: 12px;
     background: #000;
     color: #FFF;
     font-size: 20px;
     padding: 10px 40px;
+}
+
+.attendance-status-working {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.attendance-status-working input[name="break_start"],
+.form__button-attendance[name="break_end"] {
+    background-color: #fff;
+    color: #000; 
+}
+
+.atttendance-end-comment {
+    font-weight: bold;
 }

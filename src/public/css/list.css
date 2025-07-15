@@ -62,9 +62,7 @@
 }
 
 .date-wrapper input[type="date"] {
-    border: none;
-    outline: none;
-    background: transparent;
+    display: none;
 }
 
 .attendance-list-table {

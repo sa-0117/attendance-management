@@ -7,6 +7,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -57,7 +58,7 @@ class FortifyServiceProvider extends ServiceProvider
             } else {
                 $user = User::where('email', $request->email)->first();
                 if($user && Hash::check($request->password, $user->password)) {
-                    Auth::guard('user')->login($user, $request->remember);
+                    Auth::guard('web')->login($user, $request->remember);
                     return $user;
                 }
             }

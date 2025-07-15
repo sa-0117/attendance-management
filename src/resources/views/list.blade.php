@@ -19,6 +19,7 @@
                     <div class="date-wrapper">
                         <img src="{{ asset('image/calendar.svg') }}"  alt="カレンダー" class="calendar-icon">
                         <input  type="date" name="date">
+                        <p>{{ now()->format('Y/m') }}</p>
                     </div>
                     <div class="previous-month-arrow">
                         <p>翌月</p>
