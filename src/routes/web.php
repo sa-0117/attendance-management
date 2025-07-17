@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/attendance/list',[AttendanceController::class,'index'])->name('list.now');
     Route::get('/attendance/list/{period}',[AttendanceController::class,'index'])->name('list.period');
     
-    Route::get('/attendance/detail',[AttendanceController::class,'show']);//修正必要!/attendance/detail/{id}
+    Route::get('/attendance/{id}',[AttendanceController::class,'show'])->name('attendance.show');
     Route::get('/stamp_correction_request/list',[AttendanceController::class,'request']);//メソッド名修正必要
 
 });

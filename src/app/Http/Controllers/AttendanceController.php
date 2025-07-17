@@ -135,6 +135,7 @@ class AttendanceController extends Controller
             }
 
             $attendances[] = [
+                'id' => optional($attendance)->id,
                 'date' => $date,
                 'day_of_week' => $week[$date->dayOfWeek],
                 'clock_in' => optional($attendance)->clock_in,
@@ -151,9 +152,11 @@ class AttendanceController extends Controller
     }
 
 
-    public function show()
-    {
-        return view('detail');
+    public function show($id)
+    {   
+        $attendance = Attendance::with('breaks')->findOrfail($id);
+
+        return view('detail', compact('attendance'));
     }
 
     public function request()

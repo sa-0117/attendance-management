@@ -55,9 +55,13 @@
                             {{ gmdate('H:i', $attendance['break_time']) }}
                         @endif
                     </td>
-                    <td class="table__data">{{ gmdate('H:i', $attendance['work_time']) }}</td>
                     <td class="table__data">
-                        <a class="table__detail-button" href="/attendance/detail">詳細</a>
+                        @if ($attendance['work_time'])
+                            {{ gmdate('H:i', $attendance['work_time']) }}
+                        @endif
+                    </td>
+                    <td class="table__data">
+                        <a class="table__detail-button" href="{{ url('attendance/' .$attendance['id']) }}">詳細</a>
                     </td>
                 </tr>
                 @endforeach
