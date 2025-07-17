@@ -20,8 +20,8 @@ php artisan db:seed
 
 ##使用技術  
 
-* PHP 8.4  
-* Laravel 8.4  
+* PHP 7.4.9
+* Laravel 8.83.8 
 * MySQL 8.0  
 * mailtrap
 
