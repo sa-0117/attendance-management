@@ -24,17 +24,21 @@ Route::get('admin/login', [LoginController::class, 'showAdminLoginForm']);
 Route::get('/admin/users/attendances',[UserController::class,'staff']);//修正必要!/admin/users/{user}/attendances メソッドも
 Route::get('/admin/users',[UserController::class,'show']);
 
-//！！修正中！！Route::get('/attendance',[AttendanceController::class,'create']);
-Route::get('/attendance',[AttendanceController::class,'showAttendanceStatus'])->name('attendance.form');
-Route::post('/attendance/start',[AttendanceController::class,'startWork'])->name('attendance.start');
-Route::post('/attendance/end',[AttendanceController::class,'endWork'])->name('attendance.end');
-Route::post('/break/start',[AttendanceController::class,'startBreak'])->name('break.start');
-Route::post('/break/end',[AttendanceController::class,'endBreak'])->name('break.end');
+Route::middleware(['auth'])->group(function (){
+    Route::get('/attendance',[AttendanceController::class,'showAttendanceStatus'])->name('attendance.form');
+    Route::get('/attendance/list/{date?}', [AttendanceController::class, 'index'])->name('attendance.list');
+    Route::post('/attendance/start',[AttendanceController::class,'startWork'])->name('attendance.start');
+    Route::post('/attendance/end',[AttendanceController::class,'endWork'])->name('attendance.end');
+    Route::post('/break/start',[AttendanceController::class,'startBreak'])->name('break.start');
+    Route::post('/break/end',[AttendanceController::class,'endBreak'])->name('break.end');
 
+    Route::get('/attendance/list',[AttendanceController::class,'index'])->name('list.now');
+    Route::get('/attendance/list/{period}',[AttendanceController::class,'index'])->name('list.period');
+    
+    Route::get('/attendance/detail',[AttendanceController::class,'show']);//修正必要!/attendance/detail/{id}
+    Route::get('/stamp_correction_request/list',[AttendanceController::class,'request']);//メソッド名修正必要
 
-Route::get('/attendance/list',[AttendanceController::class,'index']);
-Route::get('/attendance/detail',[AttendanceController::class,'show']);//修正必要!/attendance/detail/{id}
-Route::get('/stamp_correction_request/list',[AttendanceController::class,'request']);//メソッド名修正必要
+});
 
 Route::get('/admin/attendances', [AdminController::class,'index']);
 Route::get('/admin/attendances/detail', [AdminController::class,'show']);//修正必要!/admin/attendances/{id}
