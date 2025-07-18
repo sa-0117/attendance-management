@@ -47,7 +47,7 @@
                 </tr>
                 @foreach($attendances as $attendance)
                 <tr class="table__row">
-                    <td class="table__data">{{ $attendance['date']->format('n月j日') }}（{{ $attendance['day_of_week'] }}）</td>
+                    <td class="table__data">{{ $attendance['date']->format('m月d日') }}（{{ $attendance['day_of_week'] }}）</td>
                     <td class="table__data">{{ $attendance['clock_in'] ? \Carbon\Carbon::parse($attendance['clock_in'])->format('H:i') : '' }}</td>
                     <td class="table__data">{{ $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '' }}</td>
                     <td class="table__data">

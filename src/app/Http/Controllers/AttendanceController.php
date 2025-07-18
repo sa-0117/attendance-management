@@ -152,12 +152,41 @@ class AttendanceController extends Controller
     }
 
 
-    public function show($id)
+    public function showFromdetail($id)
     {   
+        $user = auth()->user();
         $attendance = Attendance::with('breaks')->findOrfail($id);
 
-        return view('detail', compact('attendance'));
+        return view('detail', compact('user', 'attendance', 'id'));
     }
+
+    public function editFromDatail(request $request, $id) {
+
+        $user = auth()->user();
+        $attendance = Attendance::findOrfail($id);
+        $attendance->work_date = $request->input('date');
+        $attendance->clock_in = $request->input('clock_in');
+        $attendance->clock_out = $request->input('clok_out');
+        $attendance->save();
+
+        $user->name = $request->input('name');
+        $user->save();
+
+        $breaks = $request->input('breaks', []);
+        foreach ($breaks as $i => $breakData) {
+            if (isset($attendance->breaks[$i])) {
+                $break = $attendance->breaks[$i];
+                $break->break_start = $breakData['start'];
+                $break->break_end = $breakData['end'];
+                $break->save();
+            }
+        }        
+
+        return redirect()->route('attendance.detail.show', ['id' => $id]);
+    }
+
+
+
 
     public function request()
     {

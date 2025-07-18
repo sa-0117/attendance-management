@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="attendance-date">
-      <p>{{ now()->format('Y年m月d日') }}（{{ ['日','月','火','水','木','金','土'][now()->dayOfWeek] }}）</p>
+      <p>{{ now()->format('Y年n月j日') }}（{{ ['日','月','火','水','木','金','土'][now()->dayOfWeek] }}）</p>
     </div>
     <div class="attendance-time">
       <p> {{ now()->format('H:i') }}</p>
