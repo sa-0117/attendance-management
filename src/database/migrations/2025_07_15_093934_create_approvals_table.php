@@ -16,8 +16,13 @@ class CreateApprovalsTable extends Migration
         Schema::create('approvals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')->constrained()->cascadeOnDelete();
-            $table->time('status');
-            $table->time('approved_at');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->time('clock_in')->nullable();
+            $table->time('clock_out')->nullable();
+            $table->json('breaks')->nullable();
+            $table->text('remarks');
+            $table->enum('status',['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamps();
         });
     }
 

@@ -19,7 +19,7 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('admin/login', [LoginController::class, 'showAdminLoginForm']);
+Route::get('admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 
 Route::get('/admin/users/attendances',[UserController::class,'staff']);//修正必要!/admin/users/{user}/attendances メソッドも
 Route::get('/admin/users',[UserController::class,'show']);
@@ -38,7 +38,8 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/attendance/{id}',[AttendanceController::class,'showFromDetail'])->name('attendance.detail.show');
     Route::post('/attendance/{id}',[AttendanceController::class,'editFromDetail'])->name('attendance.detail.edit');
 
-    Route::get('/stamp_correction_request/list',[AttendanceController::class,'request']);//メソッド名修正必要
+    Route::get('/stamp_correction_request/list',[AttendanceController::class,'requestForm'])->name('request.form');
+
 
 });
 
