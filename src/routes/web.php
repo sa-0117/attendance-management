@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminController;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,10 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
+Route::prefix('admin')->middleware(['web', 'guest:admin'])->group(function () {
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+});
 
 Route::get('/admin/users/attendances',[UserController::class,'staff']);//修正必要!/admin/users/{user}/attendances メソッドも
 Route::get('/admin/users',[UserController::class,'show']);

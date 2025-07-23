@@ -13,7 +13,7 @@
     <div class="login-form__heading">
       <h2>管理者ログイン</h2>
     </div>
-    <form class="login-form__form" action="{{ route('login') }}" method="post" > 
+    <form class="login-form__form" action="{{ url('admin/login') }}" method="post" > 
     @csrf
       <div class="login-form__group">
         <label class="login-form__label" for="email">メールアドレス</label>          

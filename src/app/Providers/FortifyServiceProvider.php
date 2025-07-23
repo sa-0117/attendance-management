@@ -16,6 +16,8 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Contracts\LoginResponse;
 use App\Models\User;
 use App\Models\Admin;
 
@@ -32,6 +34,17 @@ class FortifyServiceProvider extends ServiceProvider
                 return redirect('/attendance');
             }
         });
+
+        $this->app->instance(LoginResponse::class,new class implements LoginResponse {
+            public function toResponse($request)
+            {
+                if(auth()->guard('admin')->check()){
+                    return redirect('/admin/attendance/list');
+                }
+
+                return redirect('/attendance');
+            }
+        });
     }
 
     /**
@@ -44,15 +57,17 @@ class FortifyServiceProvider extends ServiceProvider
                 return view('auth.register');
         });
             
-        Fortify::loginView(function () {
-            return view('auth.login');
+        Fortify::loginView(function (Request $request) {
+            return $request->is('admin/*')
+            ? view('auth.admin_login')
+            : view('auth.login');
         });
 
         Fortify::authenticateUsing(function (Request $request) {
             if ($request->is('admin/*')) {
                 $admin = Admin::where('email', $request->email)->first();
                 if ($admin && Hash::check($request->password, $admin->password)) {
-                    Auth::guard('admin')->login($admin, $request->remenber);
+                    Auth::guard('admin')->login($admin, $request->remember);
                     return $admin;
                 }
             } else {
@@ -63,7 +78,7 @@ class FortifyServiceProvider extends ServiceProvider
                 }
             }
                 return null;
-            });
+        });
             
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;

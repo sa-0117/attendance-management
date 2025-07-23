@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class AdminController extends Controlle
+class AdminController extends Controller
 {
     public function approve($id) {
-        $approval = Approval::findOrFile($id);
+        $approval = Approval::findOrFail($id);
         $attendance = $approval->attendance;
 
         $attendance->update([
