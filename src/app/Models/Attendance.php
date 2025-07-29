@@ -27,7 +27,7 @@ class Attendance extends Model
         return $this->hasOne(Approvals::class);
     }
 
-    public function users() {
+    public function user() {
         return $this->belongsTo(User::class);
     }
 

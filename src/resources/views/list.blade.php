@@ -34,6 +34,7 @@
                             <p>翌月</p>
                             <img src="{{ asset('image/rightarrow.svg') }}" alt="→" class="rightarrow-icon">
                         </a>
+                    </div>
                 </div>
             </div>
             <table class="attendance-list-table">

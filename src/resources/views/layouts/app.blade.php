@@ -16,29 +16,55 @@
         <a href="/attendance/list" class="header__logo">
           <img src="{{ asset('image/logo.svg') }}" alt="COACHTECH">
         </a>
-        @empty($HeaderParts)
-          <div class="header-nav__group">
-            <nav>
-              <ul class="header-nav">
-                <li class="header-nav__item">
-                  <a class="header-nav__link" href="/attendance">勤怠</a>
-                </li>
-                <li class="header-nav__item">
-                  <a class="header-nav__link" href="/attendance/list">勤怠一覧</a>
-                </li>
-                <li class="header-nav__item">
-                  <a class="header-nav__link" href="/stamp_correction_request/list">申請</a>
-                </li>
-                <li class="header-nav__item">
-                  <form class="header-nav__form" action="{{ route('logout') }}" method="post">
-                      @csrf  
-                      <button class="header-nav__link logout-button" type="submit">ログアウト</button>
-                  </form>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        @endempty
+        @if(auth('admin')->check())
+          @if(empty($HeaderParts))
+            <div class="header-nav__group">
+              <nav>
+                <ul class="header-nav">
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/admin/attendance/list">勤怠一覧</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/admin/staff/list">スタッフ一覧</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/stamp_correction_request/list">申請一覧</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <form class="header-nav__form" action="{{ route('admin.logout') }}" method="post">
+                        @csrf  
+                        <button class="header-nav__link logout-button" type="submit">ログアウト</button>
+                    </form>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          @endif       
+        @elseif(auth('web')->check())
+          @if(empty($HeaderParts))
+            <div class="header-nav__group">
+              <nav>
+                <ul class="header-nav">
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/attendance">勤怠</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/attendance/list">勤怠一覧</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <a class="header-nav__link" href="/stamp_correction_request/list">申請</a>
+                  </li>
+                  <li class="header-nav__item">
+                    <form class="header-nav__form" action="{{ route('logout') }}" method="post">
+                        @csrf  
+                        <button class="header-nav__link logout-button" type="submit">ログアウト</button>
+                    </form>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          @endempty
+        @endif
       </div>
     </header>
     <div class="content">

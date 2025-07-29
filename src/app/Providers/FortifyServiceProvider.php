@@ -6,7 +6,8 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\AdminLoginRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,8 +19,11 @@ use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Contracts\LoginResponse;
+use App\Actions\Fortify\CustomLoginResponse;
 use App\Models\User;
 use App\Models\Admin;
+use Laravel\Fortify\Contracts\LogoutResponse;
+use App\Actions\Fortify\CustomLogoutResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -35,16 +39,8 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
 
-        $this->app->instance(LoginResponse::class,new class implements LoginResponse {
-            public function toResponse($request)
-            {
-                if(auth()->guard('admin')->check()){
-                    return redirect('/admin/attendance/list');
-                }
-
-                return redirect('/attendance');
-            }
-        });
+        $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
+        $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
     }
 
     /**
@@ -65,19 +61,19 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::authenticateUsing(function (Request $request) {
             if ($request->is('admin/*')) {
-                $admin = Admin::where('email', $request->email)->first();
-                if ($admin && Hash::check($request->password, $admin->password)) {
-                    Auth::guard('admin')->login($admin, $request->remember);
+                $admin = \App\Models\Admin::where('email', $request->email)->first();
+                if ($admin && \Hash::check($request->password, $admin->password)) {
+                    \Auth::guard('admin')->login($admin, $request->remember);
                     return $admin;
                 }
             } else {
-                $user = User::where('email', $request->email)->first();
-                if($user && Hash::check($request->password, $user->password)) {
-                    Auth::guard('web')->login($user, $request->remember);
+                $user = \App\Models\User::where('email', $request->email)->first();
+                if ($user && \Hash::check($request->password, $user->password)) {
+                    \Auth::guard('web')->login($user, $request->remember);
                     return $user;
                 }
             }
-                return null;
+            return null;
         });
             
         RateLimiter::for('login', function (Request $request) {
@@ -86,6 +82,12 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($email . $request->ip());
         });
 
-        app()->bind(FortifyLoginRequest::class, LoginRequest::class);
+        app()->bind(FortifyLoginRequest::class, function ($app) {
+            $request = $app->make(Request::class);
+            if ($request->is('admin/*')) {
+                return $app->make(AdminLoginRequest::class);
+            }
+            return $app->make(UserLoginRequest::class);
+        });
     }
 }
