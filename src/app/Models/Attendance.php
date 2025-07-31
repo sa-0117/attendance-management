@@ -17,6 +17,8 @@ class Attendance extends Model
 
     protected $casts = [
         'work_date' => 'datetime',
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
     ];
 
     public function breaks() {

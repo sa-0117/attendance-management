@@ -29,8 +29,6 @@ Route::middleware(['auth'])->group(function (){
     Route::post('/attendance/end',[AttendanceController::class,'endWork'])->name('attendance.end');
     Route::post('/break/start',[AttendanceController::class,'startBreak'])->name('break.start');
     Route::post('/break/end',[AttendanceController::class,'endBreak'])->name('break.end');
-
-    Route::get('/attendance/list',[AttendanceController::class,'index'])->name('list.now');
     Route::get('/attendance/list/{period}',[AttendanceController::class,'index'])->name('list.period');
     
     Route::get('/attendance/{id}',[AttendanceController::class,'showFromDetail'])->name('attendance.detail.show');
@@ -43,8 +41,6 @@ Route::middleware(['auth'])->group(function (){
 
 Route::get('/admin/attendance/list', [AdminController::class, 'index'])->name('admin.list.now');
 Route::get('/admin/attendance/list/{date?}', [AdminController::class, 'index'])->name('attendance.admin.list');//日付を受け取るルート
-Route::get('/admin/attendances/detail/{id}', [AdminController::class, 'detail'])->name('attendance.admin.detail');
-Route::get('/admin/attendances/detail', [AdminController::class,'show']);//修正必要!/admin/attendance/{id}
 Route::get('/admin/requests',[AdminController::class,'request']);//メソッド名修正必要
 Route::get('/admin/requests/approvals',[AdminController::class,'approvals']);//　/admin/requests/{id} メソッド名も修正必要
 Route::get('/admin/staff/list',[AdminController::class,'showStaffList'])->name('admin.staff.list');

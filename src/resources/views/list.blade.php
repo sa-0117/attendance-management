@@ -49,20 +49,20 @@
                 @foreach($attendances as $attendance)
                 <tr class="table__row">
                     <td class="table__data">{{ $attendance['date']->format('m月d日') }}（{{ $attendance['day_of_week'] }}）</td>
-                    <td class="table__data">{{ $attendance['clock_in'] ? \Carbon\Carbon::parse($attendance['clock_in'])->format('H:i') : '' }}</td>
-                    <td class="table__data">{{ $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '' }}</td>
+                    <td class="table__data">{{ optional($attendance['clock_in'])->format('H:i') ?? '' }}</td>
+                    <td class="table__data">{{ optional($attendance['clock_out'])->format('H:i') ?? '' }}</td>
                     <td class="table__data">
                         @if ($attendance['break_time'])
-                            {{ gmdate('H:i', $attendance['break_time']) }}
+                            {{ gmdate('H:i', $attendance['break_time'] ?? 0) }}
                         @endif
                     </td>
                     <td class="table__data">
                         @if ($attendance['work_time'])
-                            {{ gmdate('H:i', $attendance['work_time']) }}
+                            {{ gmdate('H:i', $attendance['work_time'] ?? 0) }}
                         @endif
                     </td>
                     <td class="table__data">
-                        <a class="table__detail-button" href="{{ url('attendance/' .$attendance['id']) }}">詳細</a>
+                        <a class="table__detail-button" href="{{ route('attendance.detail.show', ['id' => $attendance['id'] ?? 0]) }}">詳細</a>
                     </td>
                 </tr>
                 @endforeach

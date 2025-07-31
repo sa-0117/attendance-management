@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\Approval;
 use App\Models\BreakTime;
+use App\Http\Requests\DetailRequest;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -109,7 +110,13 @@ class AttendanceController extends Controller
         $user = auth()->user();
 
         //今月分の勤怠取得
-        $attendanceData = Attendance::with('breaks')->where('user_id', $user->id)->whereBetween('work_date', [$startOfMonth, $endOfMonth])->get()->keyBy('work_date');
+        $attendanceData = Attendance::with('breaks')
+            ->where('user_id', $user->id)
+            ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->keyBy(function($item) {
+                return \Carbon\Carbon::parse($item->work_date)->format('Y-m-d');
+            });
 
         $week =['日','月','火','水','木','金','土'];
 
@@ -144,7 +151,7 @@ class AttendanceController extends Controller
                 'break_time' => $breakSeconds,
                 'work_time' => $workSeconds,
             ];
-        }
+        } 
 
         return view('list',[
             'attendances' => $attendances,
@@ -159,23 +166,30 @@ class AttendanceController extends Controller
 
         $attendance = Attendance::with('breaks')->where('id', $id)->where('user_id', $user->id)->first();
 
-    if (!$attendance) {
-        // 該当勤怠が存在しない場合は、仮の空インスタンスを作成（保存しない）
-        $attendance = new Attendance([
-            'id' => $id ?? 'new', // 仮ID
-            'user_id' => $user->id,
-            'work_date' => now()->format('Y-m-d'),
-            'clock_in' => null,
-            'clock_out' => null,
-        ]);
-        $attendance->breaks = collect(); // 空の休憩コレクション
-    }
+        if (!$attendance) {
+            // 仮の空インスタンスを作成
+            $attendance = new Attendance([
+                'id' => $id ?? 'new', // 仮ID
+                'user_id' => $user->id,
+                'work_date' => now()->format('Y-m-d'),
+                'clock_in' => null,
+                'clock_out' => null,
+            ]);
+            $attendance->breaks = collect(); // 空の休憩コレクション
+        }
+
+        // 休憩が0件ならダミーを1件追加
+        if ($attendance->breaks->isEmpty()) {
+            $attendance->breaks = collect([
+                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
+            ]);
+        }
 
         return view('detail', compact('user', 'attendance', 'id'));
     }
 
-    public function editFromDetail(Request $request, $id) {
-        
+    public function editFromDetail(DetailRequest $request, $id) {
+
         Approval::create([
             'attendance_id' => $id,
             'user_id' => auth()->id(),

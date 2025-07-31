@@ -55,7 +55,7 @@
                         <td class="table__data"></td>
                         <td class="table__data"></td>
                         <td class="table__data">
-                            <a class="table__detail-button" href="">詳細</a>
+                            <a class="table__detail-button" href="{{ route('attendance.detail.show', ['id' => $attendance['id'] ?? 0]) }}">詳細</a>
                         </td>
                     </tr>
                 @endforeach  
