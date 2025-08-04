@@ -160,22 +160,29 @@ class AttendanceController extends Controller
     }
 
 
-    public function showFromDetail($id)
+    public function showFromDetail(Request $request, $id)
     {   
         $user = auth()->user();
 
-        $attendance = Attendance::with('breaks')->where('id', $id)->where('user_id', $user->id)->first();
+        $attendance = Attendance::with('breaks','approval')
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
 
         if (!$attendance) {
+            // 一覧から渡された日付を取得（なければ今日）
+            $workDate = $request->query('date', now()->toDateString());
             // 仮の空インスタンスを作成
             $attendance = new Attendance([
-                'id' => $id ?? 'new', // 仮ID
+                'id' => $id,
                 'user_id' => $user->id,
-                'work_date' => now()->format('Y-m-d'),
+                'work_date' => $workDate,
                 'clock_in' => null,
                 'clock_out' => null,
             ]);
-            $attendance->breaks = collect(); // 空の休憩コレクション
+            $attendance->setRelation('breaks', collect([
+                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
+            ]));
         }
 
         // 休憩が0件ならダミーを1件追加
@@ -185,22 +192,12 @@ class AttendanceController extends Controller
             ]);
         }
 
-        return view('detail', compact('user', 'attendance', 'id'));
-    }
-
-    public function editFromDetail(DetailRequest $request, $id) {
-
-        Approval::create([
-            'attendance_id' => $id,
-            'user_id' => auth()->id(),
-            'clock_in' => $request->input('clock_in'),
-            'clock_out' => $request->input('clock_out'),
-            'breaks' => json_encode($request->input('breaks')),
-            'remarks' =>$request->input('remarks'),
-            'status' => 'pending',
+        return view('detail' , [
+            'user' => $user,
+            'attendance' => $attendance,
+            'id' => $user->id,
+            'approval' => $attendance->approval,
         ]);
-
-        return redirect()->route('attendance.detail.show', ['id' => $id])->with('status');
     }
 
     public function requestForm(Request $request)
@@ -210,13 +207,13 @@ class AttendanceController extends Controller
         $tab = $request->query('tab', 'pending');
 
         if ($tab === 'pending') {
-            $approvals = Approval::with('attendances')
+            $approvals = Approval::with('attendance')
             ->where('user_id', $user->id)
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
         } elseif ($tab === 'approved') {
-            $approvals = Approval::with('attendances')
+            $approvals = Approval::with('attendance')
             ->where('user_id', $user->id)
             ->where('status', 'approved')
             ->orderBy('created_at', 'desc')

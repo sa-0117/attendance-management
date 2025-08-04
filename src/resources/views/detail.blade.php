@@ -10,8 +10,10 @@
             <div class="attendance-list__heading">
                 <h2>勤怠詳細</h2>
             </div>
-            <form class="detail-form" action="{{ route('attendance.detail.edit', [$id]) }}" method="post">
+            <form class="detail-form" action="{{ route('approval.store', ['id' => $attendance->id]) }}" method="post">
                 @csrf
+                <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+                <input type="hidden" name="attendance_id" value="{{ $attendance->work_date }}" >
                 <div class="detail-form__group">
                     <div class="detail-form__row">
                         <label class="detail-form__label" for="name">名前</label>
@@ -35,7 +37,6 @@
                         <label class="detail-form__label" for="attendance">出勤・退勤</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <input type="hidden" name="id" value="{{ $attendance->id }}">
                                 <input type="text" name="clock_in" value="{{ old('clock_in', $attendance['clock_in'] ? \Carbon\Carbon::parse($attendance['clock_in'])->format('H:i') : '') }}">
                                 <span>～</span>
                                 <input type="text" name="clock_out" value="{{ old('clock_out', $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '') }}">
@@ -55,7 +56,6 @@
                             <label class="detail-form__label" for="break_{{ $index }}">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</label>
                             <div class="detail-form__data">
                                 <div class="data__inner">
-                                    <input type="hidden" name="id" value="{{ $attendance->id }}">
                                     <input type="text" name="breaks[{{ $index }}][start]" value="{{ old("breaks.$index.start", $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
                                     <span>～</span>
                                     <input type="text" name="breaks[{{ $index }}][end]" value="{{ old("breaks.$index.end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
@@ -86,7 +86,11 @@
                     </div>
                 </div>
                 <div class="detail-form__button">
-                    <input class="detail-form__button-back" type="submit" value="修正" name="back">
+                    @if($approval && $approval->status === 'pending')
+                        <p>承認待ちのため修正はできません。</p>
+                    @else
+                        <input class="detail-form__button-back" type="submit" value="修正" name="back">
+                    @endif
                 </div>
             </form>
         </div>

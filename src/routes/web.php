@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function (){
     Route::get('/attendance/list/{period}',[AttendanceController::class,'index'])->name('list.period');
     
     Route::get('/attendance/{id}',[AttendanceController::class,'showFromDetail'])->name('attendance.detail.show');
-    Route::post('/attendance/{id}',[AttendanceController::class,'editFromDetail'])->name('attendance.detail.edit');
+    Route::post('/attendance/{id}',[ApprovalController::class,'store'])->name('approval.store');
 
     Route::get('/stamp_correction_request/list',[AttendanceController::class,'requestForm'])->name('request.form');
 

@@ -25,12 +25,35 @@ class Attendance extends Model
 	    return $this->hasMany(BreakTime::class);
     }
 
-    public function approvals() {
-        return $this->hasOne(Approvals::class);
+    public function approval() {
+        return $this->hasOne(Approval::class);
     }
 
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+        public function getBreakMinutesAttribute()
+    {
+        return $this->breaks->sum(function($break) {
+            return Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
+        });
+    }
+
+    public function getBreakTimeFormattedAttribute()
+    {
+        $minutes = $this->break_minutes;
+        return $minutes ? gmdate('H:i', $minutes * 60) : '';
+    }
+
+    public function getWorkMinutesAttribute()
+    {
+        if ($this->clock_in && $this->clock_out) {
+            return \Carbon\Carbon::parse($this->clock_out)
+                ->diffInMinutes(\Carbon\Carbon::parse($this->clock_in))
+                - $this->break_minutes;
+        }
+        return null;
     }
 
 }

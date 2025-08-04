@@ -36,7 +36,7 @@ class Approval extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function attendances() {
+    public function attendance() {
 	    return $this->belongsTo(Attendance::class, 'attendance_id');
 }
 

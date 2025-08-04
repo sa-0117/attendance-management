@@ -30,32 +30,6 @@ class AdminController extends Controller
             'attendances' => $attendances,
         ]);
     }
-    public function getBreakMinutesAttribute()
-    {
-        return $this->breakTimes->sum(function($break) {
-            return Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
-        });
-    }
-
-    public function getBreakTimeFormattedAttribute()
-    {
-        $minutes = $this->break_minutes;
-        return $minutes ? floor($minutes / 60) . '時間' . ($minutes % 60) . '分' : '-';
-    }
-
-    public function getWorkMinutesAttribute()
-    {
-        if ($this->clock_in && $this->clock_out) {
-            return Carbon::parse($this->clock_out)->diffInMinutes(Carbon::parse($this->clock_in)) - $this->break_minutes;
-        }
-        return null;
-    }
-
-    public function getWorkTimeFormattedAttribute()
-    {
-        $minutes = $this->work_minutes;
-        return is_null($minutes) ? '-' : floor($minutes / 60) . '時間' . ($minutes % 60) . '分';
-    }
 
     public function show()
     {

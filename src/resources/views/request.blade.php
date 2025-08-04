@@ -30,11 +30,11 @@
                     <tr class="table__row">
                         <td class="table__data">{{ $approval->status_label }}</td>
                         <td class="table__data">{{ $approval->user->name }}</td>
-                        <td class="table__data">{{ optional($approval->attendances)->work_date->format('Y/m/d') ?? '-' }}</td>
+                        <td class="table__data">{{ optional($approval->attendance)->work_date->format('Y/m/d') ?? '' }}</td>
                         <td class="table__data">{{ $approval->remarks }}</td>
                         <td class="table__data">{{ $approval->created_at->format('Y/m/d') }}</td>
                         <td class="table__data">
-                            <a class="table__detail-button" href="{{ url('attendance/' .$approval->id) }}">詳細</a>
+                            <a class="table__detail-button" href="{{ route('attendance.detail.show', ['id' => $approval->attendance->id]) }}">詳細</a>
                         </td>
                     </tr>
                 @endforeach

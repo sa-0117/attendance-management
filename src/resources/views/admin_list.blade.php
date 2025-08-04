@@ -52,8 +52,8 @@
                         <td class="table__data">{{ $attendance->user->name }}</td>
                         <td class="table__data">{{ $attendance['clock_in'] ? \Carbon\Carbon::parse($attendance['clock_in'])->format('H:i') : '' }}</td>
                         <td class="table__data">{{ $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '' }}</td>
-                        <td class="table__data"></td>
-                        <td class="table__data"></td>
+                        <td class="table__data">{{ $attendance->break_time_formatted }}</td>
+                        <td class="table__data">{{ $attendance->work_time_formatted }}</td>
                         <td class="table__data">
                             <a class="table__detail-button" href="{{ route('attendance.detail.show', ['id' => $attendance['id'] ?? 0]) }}">詳細</a>
                         </td>

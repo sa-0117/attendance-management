@@ -82,6 +82,10 @@
     margin: 32px 0;
 }
 
+.detail-form__button p {
+    color: #ff0000;
+}
+
 .detail-form__button-back {
     border: 1px solid #000;
     border-radius: 5px;
