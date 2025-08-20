@@ -8,12 +8,12 @@
     <div class="attendance-list">
         <div class="attendance-list__inner">
             <div class="attendance-list__heading">
-                <h2>勤怠詳細</h2>
+                <h1>勤怠詳細</h1>
             </div>
-            <form class="detail-form" action="{{ route('approval.store', ['id' => $attendance->id]) }}" method="post">
+            <form class="detail-form" action="{{ route('attendance.request', ['id' => $attendance->id]) }}" method="post">
                 @csrf
                 <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
-                <input type="hidden" name="attendance_id" value="{{ $attendance->work_date }}" >
+                <input type="hidden" name="work_date" value="{{ $attendance->work_date }}" >
                 <div class="detail-form__group">
                     <div class="detail-form__row">
                         <label class="detail-form__label" for="name">名前</label>
@@ -51,7 +51,7 @@
                             </div>  
                         </div>                                             
                     </div>
-                    @foreach($attendance->breaks as $index => $break)
+                    @foreach($attendance->breaks ?? [] as $index => $break)
                         <div class="detail-form__row">
                             <label class="detail-form__label" for="break_{{ $index }}">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</label>
                             <div class="detail-form__data">
@@ -75,7 +75,7 @@
                         <label class="detail-form__label" for="remarks">備考</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <textarea name="remarks" id="remarks">{{ old('remarks') }}</textarea>
+                                <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
                             </div>
                             <div class="error-message">
                                 @error('remarks')

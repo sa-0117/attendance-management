@@ -12,9 +12,9 @@
                 <h1>申請一覧</h1>
             </div>
             <div class="border">
-                <ul class="border__list">
-                    <li><a href="">承認待ち</a></li>
-                    <li><a href="">承認済み</a></li>
+                <ul class="border__tab">
+                    <li><a href="{{ route('request.list', ['tab' => 'pending']) }}" class="{{ $tab === 'pending' ? 'active' : '' }}">承認待ち</a></li>
+                    <li><a href="{{ route('request.list', ['tab' => 'approved']) }}" class="{{ $tab === 'approved' ? 'active' : '' }}">承認済み</a></li>
                 </ul>
             </div>
             <table class="attendance-list-table">
@@ -26,16 +26,18 @@
                     <th class="table__label">申請日時</th>
                     <th class="table__label">詳細</th>
                 </tr>
-                <tr class="table__row">
-                    <td class="table__data"></td>
-                    <td class="table__data"></td>
-                    <td class="table__data"></td>
-                    <td class="table__data"></td>
-                    <td class="table__data"></td>
-                    <td class="table__data">
-                        <a class="table__detail-button" href="">詳細</a>
-                    </td>
-                </tr>
+                @foreach ($approvals as $approval)
+                    <tr class="table__row">
+                        <td class="table__data">{{ $approval->status_label }}</td>
+                        <td class="table__data">{{ $approval->user->name }}</td>
+                        <td class="table__data">{{ optional($approval->attendance)->work_date->format('Y/m/d') ?? '' }}</td>
+                        <td class="table__data">{{ $approval->remarks }}</td>
+                        <td class="table__data">{{ $approval->created_at->format('Y/m/d') }}</td>
+                        <td class="table__data">
+                            <a class="table__detail-button" href="{{ route('approval.show', ['attendance_correct_request' => $approval->id]) }}">詳細</a>
+                        </td>
+                    </tr>
+                @endforeach
             </table>
         </div>
     </div>

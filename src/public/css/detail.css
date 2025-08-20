@@ -7,7 +7,7 @@
     margin: 40px;
 }
 
-.attendance-list__heading h2 {
+.attendance-list__heading h1 {
     padding-left: 15px;
     border-left: 5px solid #000;
 }
@@ -98,5 +98,5 @@
     min-height: 20px;
     color: #ff0000;
     text-align: left;
-    font-size: 0.9em;
+    font-size: 12px;
 }

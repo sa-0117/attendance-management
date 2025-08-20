@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\Approval;
 use App\Models\BreakTime;
+use App\Models\User;
 use App\Http\Requests\DetailRequest;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -14,7 +15,7 @@ use Carbon\CarbonPeriod;
 class AttendanceController extends Controller
 {
     public function showAttendanceStatus() {
-        $user = auth()->user();
+        $user = auth('web')->user();
         $today = now()->format('Y-m-d');
 
         $attendance = Attendance::where('user_id', $user->id)
@@ -31,7 +32,7 @@ class AttendanceController extends Controller
 
     public function startWork()
     {
-        $user = auth()->user();
+        $user = auth('web')->user();
         Attendance::create([
             'user_id' => $user->id,
             'work_date' => now()->format('Y-m-d'),
@@ -43,7 +44,7 @@ class AttendanceController extends Controller
 
     public function endWork()
     {
-        $user = auth()->user();
+        $user = auth('web')->user();
         $attendance = Attendance::where('user_id', $user->id)
                         ->where('work_date', now()->format('Y-m-d'))
                         ->first();
@@ -58,7 +59,7 @@ class AttendanceController extends Controller
     }
 
     public function startBreak() {
-        $user = auth()->user();
+        $user = auth('web')->user();
         $today = now()->format('Y-m-d');
 
         $attendance = Attendance::where('user_id', $user->id)
@@ -78,7 +79,7 @@ class AttendanceController extends Controller
     }
 
     public function endBreak() {
-        $user = auth()->user();
+        $user = auth('web')->user();
         $today = now()->format('Y-m-d');
 
         $attendance = Attendance::where('user_id', $user->id)
@@ -107,7 +108,7 @@ class AttendanceController extends Controller
         $endOfMonth = $targetDate->copy()->endOfMonth();
 
         $period = CarbonPeriod::create($startOfMonth, $endOfMonth);
-        $user = auth()->user();
+        $user = auth('web')->user();
 
         //今月分の勤怠取得
         $attendanceData = Attendance::with('breaks')
@@ -159,72 +160,123 @@ class AttendanceController extends Controller
         ]);
     }
 
+    public function showFormDetail(Request $request, $id) 
+    {
+        if (auth('admin')->check()) {
 
-    public function showFromDetail(Request $request, $id)
-    {   
-        $user = auth()->user();
+            if (is_numeric($id)) {
+                $attendance = Attendance::with('breaks', 'approval', 'user')->find($id);
 
-        $attendance = Attendance::with('breaks','approval')
-            ->where('id', $id)
-            ->where('user_id', $user->id)
-            ->first();
+                if (!$attendance) {
+                    abort(404);
+                }
+            } else {
+                $staffId = $request->query('staff_id');
+                $workDate = $request->query('date', now()->toDateString());
 
-        if (!$attendance) {
-            // 一覧から渡された日付を取得（なければ今日）
-            $workDate = $request->query('date', now()->toDateString());
-            // 仮の空インスタンスを作成
-            $attendance = new Attendance([
-                'id' => $id,
-                'user_id' => $user->id,
-                'work_date' => $workDate,
-                'clock_in' => null,
-                'clock_out' => null,
+                $attendance = Attendance::create ([
+                    'user_id' => $staffId,
+                    'work_date' => $workDate,
+                    'status' => 'off',
+                ]);
+            }
+
+            if ($attendance->breaks->isEmpty()) {
+                $attendance->setRelation('breaks', collect([
+                    new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
+                ]));
+            } 
+            
+
+            $pendingApproval = Approval::where('attendance_id', $attendance->id)
+                ->where('status','pending')
+                ->latest('id')
+                ->first();
+
+            return view('admin_detail', [
+                'attendance' => $attendance,
+                'user' => $attendance->user, 
+                'id' => $attendance->user->id,
+                'approval' => $pendingApproval, 
             ]);
-            $attendance->setRelation('breaks', collect([
-                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
-            ]));
         }
 
-        // 休憩が0件ならダミーを1件追加
-        if ($attendance->breaks->isEmpty()) {
-            $attendance->breaks = collect([
-                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
+        
+        if (auth('web')->check()) {
+            $user = auth('web')->user();
+
+            $attendance = Attendance::with('breaks')
+                ->where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if (!$attendance) {
+                $workDate = $request->query('date', now()->toDateString());
+                $attendance = Attendance::create([
+                    'user_id' => $user->id,
+                    'work_date' => $workDate,
+                    'status' => 'off',
+                ]);
+                $attendance->setRelation('breaks', collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]));
+            }
+
+            $pendingApproval = Approval::where('attendance_id', $attendance->id)
+                ->where('status', 'pending')
+                ->latest('id')
+                ->first();
+
+            if ($pendingApproval) {
+                $attendance->clock_in = $pendingApproval->clock_in;
+                $attendance->clock_out = $pendingApproval->clock_out;
+                $attendance->remarks = $pendingApproval->remarks;
+
+                $breaks = collect($pendingApproval->breaks ?? [])
+                    ->filter(fn($b) => !empty($b['start']) || !empty($b['end']))
+                    ->map(fn($b) => new \App\Models\BreakTime([
+                        'break_start' => $b['start'] ?? null,
+                        'break_end' => $b['end']   ?? null,
+                    ]));
+
+                if ($breaks->isEmpty()) {
+                    $breaks = collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]);
+                }
+                $attendance->setRelation('breaks', $breaks);
+            } elseif ($attendance->breaks->isEmpty()) {
+                    $attendance->setRelation('breaks', collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]));
+            }
+
+            return view('detail', [
+                'user' => $user,
+                'attendance' => $attendance,
+                'id' => $user->id,
+                'approval' => $pendingApproval,
             ]);
         }
-
-        return view('detail' , [
-            'user' => $user,
-            'attendance' => $attendance,
-            'id' => $user->id,
-            'approval' => $attendance->approval,
-        ]);
+        abort(403);
     }
 
-    public function requestForm(Request $request)
-    {
-
-        $user = auth()->user();
-        $tab = $request->query('tab', 'pending');
-
-        if ($tab === 'pending') {
-            $approvals = Approval::with('attendance')
-            ->where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        } elseif ($tab === 'approved') {
-            $approvals = Approval::with('attendance')
-            ->where('user_id', $user->id)
-            ->where('status', 'approved')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        }else {
-            $approvals = collect();
+    public function update(DetailRequest $request, $id) {
+        if (!auth('admin')->check()) {
+            about(403);
         }
 
-        return view('request', [
-            'approvals' => $approvals,
-            'tab' => $tab,
+        $attendance = Attendance::findOrFail('id');
+
+        $attendance->update ([
+            'clock_in' => $request->clock_in,
+            'clock_out' => $request->clock_out,
+            'remarks' => $request->remarks,
         ]);
+
+        $attendance->breaks()->delete();
+        foreach ($request->breaks ?? [] as $break) {
+            if (!empty($break['start']) || !empty($break['end'])) {
+                $attendance->breaks()->create([
+                    'break_start' => $break['start'],
+                    'break_end' => $break['end'],
+                ]);
+            }
+        }
+        return redirect()->route('admin.list.now', ['id'=> $attendance->id]);
     }
 }

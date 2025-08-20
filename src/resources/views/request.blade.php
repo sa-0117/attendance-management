@@ -13,8 +13,8 @@
             </div>
             <div class="border">
                 <ul class="border__tab">
-                    <li><a href="{{ route('request.form', ['tab' => 'pending']) }}" class="{{ $tab === 'pending' ? 'active' : '' }}">承認待ち</a></li>
-                    <li><a href="{{ route('request.form', ['tab' === 'approved']) }}" class="{{ $tab === 'approved' ? 'active' : '' }}">承認済み</a></li>
+                    <li><a href="{{ route('request.list', ['tab' => 'pending']) }}" class="{{ $tab === 'pending' ? 'active' : '' }}">承認待ち</a></li>
+                    <li><a href="{{ route('request.list', ['tab' => 'approved']) }}" class="{{ $tab === 'approved' ? 'active' : '' }}">承認済み</a></li>
                 </ul>
             </div>
             <table class="attendance-list-table">
@@ -34,7 +34,7 @@
                         <td class="table__data">{{ $approval->remarks }}</td>
                         <td class="table__data">{{ $approval->created_at->format('Y/m/d') }}</td>
                         <td class="table__data">
-                            <a class="table__detail-button" href="{{ route('attendance.detail.show', ['id' => $approval->attendance->id]) }}">詳細</a>
+                            <a class="table__detail-button" href="{{ route('attendance.detail', ['id' => $approval->attendance->id]) }}">詳細</a>
                         </td>
                     </tr>
                 @endforeach

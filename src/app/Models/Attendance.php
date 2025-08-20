@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Attendance extends Model
 {
@@ -49,11 +50,17 @@ class Attendance extends Model
     public function getWorkMinutesAttribute()
     {
         if ($this->clock_in && $this->clock_out) {
-            return \Carbon\Carbon::parse($this->clock_out)
-                ->diffInMinutes(\Carbon\Carbon::parse($this->clock_in))
+            return Carbon::parse($this->clock_out)
+                ->diffInMinutes(Carbon::parse($this->clock_in))
                 - $this->break_minutes;
         }
         return null;
+    }
+
+    public function getWorkTimeFormattedAttribute()
+    {
+        $minutes = $this->work_minutes;
+        return $minutes ? gmdate('H:i', $minutes * 60) : '';
     }
 
 }

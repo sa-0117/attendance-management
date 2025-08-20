@@ -28,14 +28,14 @@ class DetailRequest extends FormRequest
             'clock_out' => 'required|date_format:H:i',
             'breaks.*.start' => 'nullable|date_format:H:i|after:clock_in|before:clock_out',
             'breaks.*.end'   => 'nullable|date_format:H:i|after:breaks.*.start|before:clock_out',
-            'remarks' => 'required'
+            'remarks' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-             'clock_in.before'   => '出勤時間もしくは退勤時間が不適切な値です',
+            'clock_in.before'   => '出勤時間もしくは退勤時間が不適切な値です',
             'clock_out.after'   => '出勤時間もしくは退勤時間が不適切な値です',
 
             'breaks.*.start.after' => '休憩時間が不適切な値です',
