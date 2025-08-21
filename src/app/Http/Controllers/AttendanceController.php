@@ -186,7 +186,19 @@ class AttendanceController extends Controller
                     new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
                 ]));
             } 
-            
+
+            //既存の休憩データを取得
+            $breaks = $attendance->breaks ? collect($attendance->breaks) : collect();
+
+            $minBreaks = 2;
+            for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+                $breaks->push(new \App\Models\BreakTime([
+                    'break_start' => null,
+                    'break_end' => null,
+                ]));
+            }
+
+            $attendance->setRelation('breaks', $breaks);
 
             $pendingApproval = Approval::where('attendance_id', $attendance->id)
                 ->where('status','pending')
@@ -198,6 +210,7 @@ class AttendanceController extends Controller
                 'user' => $attendance->user, 
                 'id' => $attendance->user->id,
                 'approval' => $pendingApproval, 
+                'breaks' => $breaks
             ]);
         }
 
@@ -222,7 +235,6 @@ class AttendanceController extends Controller
 
             $pendingApproval = Approval::where('attendance_id', $attendance->id)
                 ->where('status', 'pending')
-                ->latest('id')
                 ->first();
 
             if ($pendingApproval) {
@@ -245,14 +257,27 @@ class AttendanceController extends Controller
                     $attendance->setRelation('breaks', collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]));
             }
 
+            $breaks = $attendance->breaks ? collect($attendance->breaks) : collect();
+
+            $minBreaks = 2;
+            for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+                $breaks->push(new \App\Models\BreakTime([
+                    'break_start' => null,
+                    'break_end' => null,
+                ]));
+            }
+
+            $attendance->setRelation('breaks', $breaks); 
+            
+
             return view('detail', [
                 'user' => $user,
                 'attendance' => $attendance,
                 'id' => $user->id,
                 'approval' => $pendingApproval,
+                'breaks' => $breaks
             ]);
         }
-        abort(403);
     }
 
     public function update(DetailRequest $request, $id) {
@@ -260,7 +285,7 @@ class AttendanceController extends Controller
             about(403);
         }
 
-        $attendance = Attendance::findOrFail('id');
+        $attendance = Attendance::findOrFail($id);
 
         $attendance->update ([
             'clock_in' => $request->clock_in,

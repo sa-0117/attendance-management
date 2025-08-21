@@ -37,18 +37,16 @@
                         <label class="detail-form__label" for="attendance">出勤・退勤</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <input type="text" name="clock_in" value="{{ old('clock_in', $attendance['clock_in'] ? \Carbon\Carbon::parse($attendance['clock_in'])->format('H:i') : '') }}">
+                                <input type="text" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
                                 <span>～</span>
-                                <input type="text" name="clock_out" value="{{ old('clock_out', $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '') }}">
+                                <input type="text" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
                             </div>
-                            <div class="error-message">
-                                @error('clock_in')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                                @error('clock_out')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                            </div>  
+                            @error('clock_in')
+                                <p class="error-message">{{ $message }}</p>
+                            @enderror
+                            @error('clock_out')
+                                <p class="error-message">{{ $message }}</p>
+                            @enderror
                         </div>                                             
                     </div>
                     @foreach($attendance->breaks ?? [] as $index => $break)
@@ -60,14 +58,12 @@
                                     <span>～</span>
                                     <input type="text" name="breaks[{{ $index }}][end]" value="{{ old("breaks.$index.end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
                                 </div>
-                                <div class="error-message">
-                                    @error("breaks.$index.start")
-                                        <div class="error-message">{{ $message }}</div>
-                                    @enderror
-                                    @error("breaks.$index.end")
-                                        <div class="error-message">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                @error("breaks.$index.start")
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
+                                @error("breaks.$index.end")
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     @endforeach                   
@@ -77,11 +73,9 @@
                             <div class="data__inner">
                                 <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
                             </div>
-                            <div class="error-message">
-                                @error('remarks')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                            </div> 
+                            @error('remarks')
+                                <p class="error-message">{{ $message }}</p>
+                            @enderror
                         </div>                                               
                     </div>
                 </div>

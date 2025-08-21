@@ -24,10 +24,10 @@ class DetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'clock_in'  => 'required|date_format:H:i|before:clock_out',
-            'clock_out' => 'required|date_format:H:i',
-            'breaks.*.start' => 'nullable|date_format:H:i|after:clock_in|before:clock_out',
-            'breaks.*.end'   => 'nullable|date_format:H:i|after:breaks.*.start|before:clock_out',
+            'clock_in'  => 'before:clock_out',
+            'clock_out' => 'after:clock_in',
+            'breaks.*.start' => 'nullable|after:clock_in|before:clock_out',
+            'breaks.*.end'   => 'nullable|after:clock_in|before:clock_out',
             'remarks' => 'required',
         ];
     }

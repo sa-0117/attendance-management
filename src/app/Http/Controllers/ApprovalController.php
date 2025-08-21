@@ -49,9 +49,9 @@ class ApprovalController extends Controller
 
     public function showApprovalForm($id)
     {
-        $approval = Approval::with(['attendance.breaks', 'attendance.user'])->findOrFail($id);
+        $approval = Approval::with(['attendance', 'attendance.user'])->findOrFail($id);
 
-        $breaks = $approval->breaks ?? [];
+         $breaks = is_array($approval->breaks) ? $approval->breaks : [];
 
         $minBreaks = 2;
         if (count($breaks) < $minBreaks) {
@@ -78,10 +78,13 @@ class ApprovalController extends Controller
 
         // 休憩差し替え
         $attendance->breaks()->delete();
-        foreach ($approval->breaks ?? [] as $break) {
+
+        $breaks = is_array($approval->breaks) ? $approval->breaks : [];
+
+        foreach ($breaks as $break) {
             $attendance->breaks()->create([
-                'break_start' => $break['start'],
-                'break_end'   => $break['end'],
+                'break_start' => $break['start'] ?? null,
+                'break_end'   => $break['end'] ?? null,
             ]);
         }
 
@@ -100,7 +103,7 @@ class ApprovalController extends Controller
             ->values()
             ->all();
 
-        Approval::create([
+        $approval = Approval::create([
             'attendance_id' => $attendance->id,
             'user_id' => auth()->id(),
             'clock_in' => $request->clock_in,
