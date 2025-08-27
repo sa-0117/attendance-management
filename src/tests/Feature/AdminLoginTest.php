@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Admin;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-class LoginTest extends TestCase
+class AdminLoginTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -17,22 +17,22 @@ class LoginTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_login_user()
+    public function test_login_admin()
     {   
-        $user = User::firstWhere('email', 'user@example.com');
+        $admin = Admin::firstWhere('email', 'testadmin@example.com');
 
-        $response = $this->withSession(['url.intended' => '/attendance'])->post('/login',[    
-            'email'=> "user@example.com",
+        $response = $this->withSession(['url.intended' => '/admin/attendance/list'])->post('/admin/login',[    
+            'email'=> "testadmin@example.com",
             'password' => "password123",
         ]);
 
-        $response->assertRedirect('/attendance');
-        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect('/admin/attendance/list');
+        $this->assertAuthenticatedAs($admin);
     }
 
-    public function test_login_user_validate_email()
+    public function test_login_admin_validate_email()
     {
-        $response = $this->post('/login', [
+        $response = $this->post('/admin/login', [
             'email' => "",
             'password' => "password123",
         ]);
@@ -44,10 +44,10 @@ class LoginTest extends TestCase
         $this->assertEquals('メールアドレスを入力してください', $errors->first('email'));
     }
 
-    public function test_login_user_validate_password()
+    public function test_login_admin_validate_password()
     {
-        $response = $this->post('/login', [
-            'email' => "user@example.com",
+        $response = $this->post('/admin/login', [
+            'email' => "testadmin@example.com",
             'password' => "",
         ]);
 
@@ -60,8 +60,8 @@ class LoginTest extends TestCase
 
     public function test_login_user_validate_user()
     {
-        $response = $this->post('/login', [
-            'email' => "user2@example.com",
+        $response = $this->post('/admin/login', [
+            'email' => "test@example.com",
             'password' => "password123",
         ]);
 
