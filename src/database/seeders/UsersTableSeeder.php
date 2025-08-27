@@ -52,5 +52,26 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('noriopassword'),  
             ],
         ]);
+
+        $param = [
+            'name' => '一般ユーザー1',
+            'email' => 'user1@example.com',
+            'password' => Hash::make('password123'),
+        ];
+        User::create($param);
+
+        $param = [
+            'name' => '一般ユーザー2',
+            'email' => 'user2@example.com',
+            'password' => Hash::make('password123'),
+        ];
+        User::create($param);
+
+        $param = [
+            'name' => '管理者',
+            'email' => 'testadmin@example.com',
+            'password' => Hash::make('password123'),
+        ];
+        User::create($param);
     }
 }
