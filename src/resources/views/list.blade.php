@@ -48,12 +48,12 @@
                 </tr>
                 @foreach($attendances as $attendance)
                 <tr class="table__row">
-                    <td class="table__data">{{ $attendance['date']->format('m月d日') }}（{{ $attendance['day_of_week'] }}）</td>
+                    <td class="table__data">{{ \Carbon\Carbon::parse($attendance['date'])->format('m月d日') }}（{{ $attendance['day_of_week'] }}）</td>
                     <td class="table__data">{{ optional($attendance['clock_in'])->format('H:i') ?? '' }}</td>
                     <td class="table__data">{{ optional($attendance['clock_out'])->format('H:i') ?? '' }}</td>
                     <td class="table__data">
                         @if ($attendance['break_time'])
-                            {{ gmdate('H:i', $attendance['break_time'] ?? 0) }}
+                            {{ gmdate('H:i', ($attendance['break_time'] ?? 0) *60) }}
                         @endif
                     </td>
                     <td class="table__data">

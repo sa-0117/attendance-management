@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UsersTableSeeder extends Seeder
 {
@@ -53,11 +54,36 @@ class UsersTableSeeder extends Seeder
             ],
         ]);
 
-        $param = [
-            'name' => '一般ユーザー',
-            'email' => 'user@example.com',
-            'password' => Hash::make('password123'),
+        $testUsers = [
+            [
+                'name' => '一般ユーザー',
+                'email' => 'user@example.com',
+                'password' => Hash::make('password123'),
+            ],
+            [
+                'name' => '勤務外ユーザー',
+                'email' => 'off@example.com',
+                'password' => Hash::make('password123'),
+            ],
+            [
+                'name' => '出勤中ユーザー',
+                'email' => 'working@example.com',
+                'password' => Hash::make('password123'),
+            ],
+            [
+                'name' => '休憩中ユーザー',
+                'email' => 'break@example.com',
+                'password' => Hash::make('password123'),
+            ],
+            [
+                'name' => '退勤済みユーザー',
+                'email' => 'end@example.com',
+                'password' => Hash::make('password123'),
+            ],
         ];
-        User::create($param);
+
+        foreach ($testUsers as $userData) {
+            User::create($userData);
+        }
     }
 }

@@ -21,10 +21,10 @@ class AdminsTableSeeder extends Seeder
             'password' => Hash::make('adminpassword'),
         ]);
 
-        $param = [
+        $adminData = [
             'email' => 'testadmin@example.com',
             'password' => Hash::make('password123'),
         ];
-        Admin::create($param);
+        Admin::create($adminData);
     }
 }

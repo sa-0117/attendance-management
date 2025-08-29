@@ -35,8 +35,8 @@ class DetailRequest extends FormRequest
     public function messages()
     {
         return [
-            'clock_in.before'   => '出勤時間もしくは退勤時間が不適切な値です',
-            'clock_out.after'   => '出勤時間もしくは退勤時間が不適切な値です',
+            'clock_in.before'   => '出勤時間が不適切な値です',
+            'clock_out.after'   => '退勤時間が不適切な値です',
 
             'breaks.*.start.after' => '休憩時間が不適切な値です',
             'breaks.*.start.before' => '休憩時間が不適切な値です',
