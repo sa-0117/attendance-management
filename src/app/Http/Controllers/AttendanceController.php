@@ -161,138 +161,149 @@ class AttendanceController extends Controller
     }
 
     public function showFormDetail(Request $request, $id) 
-    {
-        if (auth('admin')->check()) {
+{
+    // 管理者ログイン時
+    if (auth('admin')->check()) {
 
-            if (is_numeric($id)) {
-                $attendance = Attendance::with('breaks', 'approval', 'user')->find($id);
+        if ($id === 'new' || $id == 0) {
+            $staffId = $request->query('staff_id');
+            $workDate = $request->query('date', now()->toDateString());
 
-                if (!$attendance) {
-                    abort(404);
-                }
-            } else {
-                $staffId = $request->query('staff_id');
-                $workDate = $request->query('date', now()->toDateString());
-
-                $attendance = Attendance::create ([
-                    'user_id' => $staffId,
-                    'work_date' => $workDate,
-                    'status' => 'off',
-                ]);
-            }
-
-            if ($attendance->breaks->isEmpty()) {
-                $attendance->setRelation('breaks', collect([
-                    new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
-                ]));
-            } 
-
-            //既存の休憩データを取得
-            $breaks = $attendance->breaks ? collect($attendance->breaks) : collect();
-
-            $minBreaks = 2;
-            for ($i = $breaks->count(); $i < $minBreaks; $i++) {
-                $breaks->push(new \App\Models\BreakTime([
-                    'break_start' => null,
-                    'break_end' => null,
-                ]));
-            }
-
-            $attendance->setRelation('breaks', $breaks);
-
-            $pendingApproval = Approval::where('attendance_id', $attendance->id)
-                ->where('status','pending')
-                ->latest('id')
-                ->first();
-
-            return view('admin_detail', [
-                'attendance' => $attendance,
-                'user' => $attendance->user, 
-                'id' => $attendance->user->id,
-                'approval' => $pendingApproval, 
-                'breaks' => $breaks
+            $attendance = new Attendance([
+                'user_id' => $staffId,
+                'work_date' => $workDate,
+                'status' => 'off',
             ]);
-        }
+            $user = User::find($staffId);
 
-        
-        if (auth('web')->check()) {
-            $user = auth('web')->user();
-
-            $attendance = Attendance::with('breaks')
-                ->where('id', $id)
-                ->where('user_id', $user->id)
-                ->first();
+        } else {
+            $attendance = Attendance::with('breaks', 'approval', 'user')->find($id);
 
             if (!$attendance) {
-                $workDate = $request->query('date', now()->toDateString());
-                $attendance = Attendance::create([
-                    'user_id' => $user->id,
-                    'work_date' => $workDate,
-                    'status' => 'off',
-                ]);
-                $attendance->setRelation('breaks', collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]));
+                abort(404);
             }
 
-            $pendingApproval = Approval::where('attendance_id', $attendance->id)
-                ->where('status', 'pending')
-                ->first();
+            $user = $attendance->user;
+        }
 
-            if ($pendingApproval) {
-                $attendance->clock_in = $pendingApproval->clock_in;
-                $attendance->clock_out = $pendingApproval->clock_out;
-                $attendance->remarks = $pendingApproval->remarks;
-
-                $breaks = collect($pendingApproval->breaks ?? [])
-                    ->filter(fn($b) => !empty($b['start']) || !empty($b['end']))
-                    ->map(fn($b) => new \App\Models\BreakTime([
-                        'break_start' => $b['start'] ?? null,
-                        'break_end' => $b['end']   ?? null,
-                    ]));
-
-                if ($breaks->isEmpty()) {
-                    $breaks = collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]);
-                }
-                $attendance->setRelation('breaks', $breaks);
-            } elseif ($attendance->breaks->isEmpty()) {
-                    $attendance->setRelation('breaks', collect([ new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]) ]));
-            }
-
-            $breaks = $attendance->breaks ? collect($attendance->breaks) : collect();
-
-            $minBreaks = 2;
-            for ($i = $breaks->count(); $i < $minBreaks; $i++) {
-                $breaks->push(new \App\Models\BreakTime([
-                    'break_start' => null,
-                    'break_end' => null,
-                ]));
-            }
-
-            $attendance->setRelation('breaks', $breaks); 
-            
-
-            return view('detail', [
-                'user' => $user,
-                'attendance' => $attendance,
-                'id' => $user->id,
-                'approval' => $pendingApproval,
-                'breaks' => $breaks
+        // BreakTime 初期化（最低2枠）
+        $breaks = collect($attendance->breaks ?? []);
+        if ($breaks->isEmpty()) {
+            $breaks = collect([
+                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
             ]);
         }
+
+        $minBreaks = 2;
+        for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+            $breaks->push(new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]));
+        }
+        $attendance->setRelation('breaks', $breaks);
+
+        // 承認保留の取得
+        $pendingApproval = Approval::where('attendance_id', $attendance->id ?? 0)
+            ->where('status', 'pending')
+            ->latest('id')
+            ->first();
+
+        return view('admin_detail', [
+            'attendance' => $attendance,
+            'user' => $attendance->user ?? User::find($staffId),
+            'id' => $attendance->user->id ?? $staffId,
+            'approval' => $pendingApproval,
+            'breaks' => $breaks
+        ]);
     }
+
+
+    // 一般ユーザーログイン時
+    if (auth('web')->check()) {
+        $user = auth('web')->user();
+
+        $attendance = Attendance::with('breaks')
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$attendance) {
+            $workDate = $request->query('date', now()->toDateString());
+            $attendance = new Attendance([
+                'user_id' => $user->id,
+                'work_date' => $workDate,
+                'status' => 'off',
+            ]);
+        }
+
+        // BreakTime 初期化
+        $pendingApproval = Approval::where('attendance_id', $attendance->id ?? 0)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($pendingApproval) {
+            $attendance->clock_in = $pendingApproval->clock_in;
+            $attendance->clock_out = $pendingApproval->clock_out;
+            $attendance->remarks = $pendingApproval->remarks;
+
+            $breaks = collect($pendingApproval->breaks ?? [])
+                ->filter(fn($b) => !empty($b['start']) || !empty($b['end']))
+                ->map(fn($b) => new \App\Models\BreakTime([
+                    'break_start' => $b['start'] ?? null,
+                    'break_end' => $b['end'] ?? null,
+                ]));
+        } else {
+            $breaks = $attendance->breaks->isEmpty() ? collect([
+                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
+            ]) : collect($attendance->breaks);
+        }
+
+        // 最低 2 枠確保
+        $minBreaks = 2;
+        for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+            $breaks->push(new \App\Models\BreakTime([
+                'break_start' => null,
+                'break_end' => null,
+            ]));
+        }
+
+        $attendance->setRelation('breaks', $breaks);
+
+        return view('detail', [
+            'user' => $user,
+            'attendance' => $attendance,
+            'id' => $user->id,
+            'approval' => $pendingApproval,
+            'breaks' => $breaks
+        ]);
+    }
+
+    abort(403);
+}
 
     public function update(DetailRequest $request, $id) {
         if (!auth('admin')->check()) {
-            about(403);
+            abort(403);
         }
 
-        $attendance = Attendance::findOrFail($id);
+        if ($id) {
+        $attendance = Attendance::find($id);
+        }
 
-        $attendance->update ([
+        if (empty($attendance)) {
+            $attendance = Attendance::create([
+                'user_id' => $request->user_id,
+                'work_date' => $request->work_date,
+                'status' => 'off',
+            ]);
+        }
+
+        // Attendance の基本情報を更新
+        $attendance->update([
             'clock_in' => $request->clock_in,
             'clock_out' => $request->clock_out,
             'remarks' => $request->remarks,
         ]);
 
+        // 既存 BreakTime を削除して再作成
         $attendance->breaks()->delete();
         foreach ($request->breaks ?? [] as $break) {
             if (!empty($break['start']) || !empty($break['end'])) {
@@ -302,6 +313,19 @@ class AttendanceController extends Controller
                 ]);
             }
         }
+
+        // 最低2枠の BreakTime を保証（更新後のビュー用）
+        $breaks = $attendance->breaks;
+        $minBreaks = 2;
+        for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+            $breaks->push(new \App\Models\BreakTime([
+                'break_start' => null,
+                'break_end' => null,
+            ]));
+        }
+
+        $attendance->setRelation('breaks', $breaks);
+
         return redirect()->route('admin.list.now', ['id'=> $attendance->id]);
     }
 }

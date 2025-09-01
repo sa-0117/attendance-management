@@ -14,8 +14,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UsersTableSeeder::class);
-        $this->call(AdminsTableSeeder::class);
-        $this->call(AttendancesTableSeeder::class);
+        if (app()->environment('testing')) {
+            // テスト環境
+            $this->call([
+                UsersTableSeeder::class,
+                AdminsTableSeeder::class,
+                TestAttendancesTableSeeder::class,
+            ]);
+        } else {
+            // 本番・ローカル環境
+            $this->call([
+                UsersTableSeeder::class,
+                AdminsTableSeeder::class,
+            ]);
+        }
     }
 }

@@ -10,12 +10,9 @@
             <div class="attendance-list__heading">
                 <h1>勤怠詳細</h1>
             </div>
-            <form class="detail-form" action="{{ auth('admin')->check() 
-                ? route('attendance.update', ['id' => $attendance->id]) 
-                : route('attendance.request', ['id' => $attendance->id]) }}" 
-                method="post">
+            <form class="detail-form" action="{{ $attendance->id ? route('attendance.update', $attendance->id) : route('attendance.request', ['id' => 'new']) }}" method="POST"> 
                 @csrf
-                @if (auth('admin')->check())
+                @if ($attendance->id)
                     @method('put')
                 @endif
                 <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
@@ -25,7 +22,7 @@
                         <label class="detail-form__label" for="name">名前</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <input type="text" name="name" value="{{ old('name', $attendance->user->name) }}" readonly />
+                                <input type="text" name="name" value="{{ old('name', $attendance->user->name ?? $user->name ?? '') }}" readonly />
                             </div>
                         </div>                        
                     </div>

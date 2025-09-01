@@ -21,10 +21,11 @@ class AdminsTableSeeder extends Seeder
             'password' => Hash::make('adminpassword'),
         ]);
 
-        $adminData = [
-            'email' => 'testadmin@example.com',
-            'password' => Hash::make('password123'),
-        ];
-        Admin::create($adminData);
+        if (app()->environment('testing')) {
+            Admin::create([
+                'email' => 'testadmin@example.com',
+                'password' => Hash::make('password123'),
+            ]);
+        }
     }
 }

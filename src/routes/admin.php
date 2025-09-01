@@ -40,5 +40,5 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::get('/admin/staff/list',[UserController::class,'show'])->name('admin.staff.list');
     Route::get('/admin/attendance/staff/{id}',[AdminController::class, 'showAttendanceStaff'])->name('admin.attendance.staff');
-
+    Route::post('/admin/attendance/staff/{id}/csv',[AdminController::class, 'attendanceStaffCsv'])->name('admin.attendance.staff.csv');
 });

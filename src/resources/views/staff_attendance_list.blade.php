@@ -18,7 +18,7 @@
             <div class="attendance-list-monthly">
                 <div class="monthly-group">
                     <div class="previous-month-arrow">
-                        <a href="{{ route('attendance.list', ['date'=> $prev]) }}">
+                        <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'date'=> $prev]) }}">
                             <img src="{{ asset('image/leftarrow.svg') }}" alt="←" class="leftarrow-icon">
                             <p>前月</p>
                         </a>
@@ -31,7 +31,7 @@
                         <p>{{ $targetDate->format('Y/m') }}</p>
                     </div>
                     <div class="previous-month-arrow">
-                        <a href="{{ route('attendance.list', ['date'=> $next]) }}">
+                        <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'date'=> $next]) }}">
                             <p>翌月</p>
                             <img src="{{ asset('image/rightarrow.svg') }}" alt="→" class="rightarrow-icon">
                         </a>
@@ -66,13 +66,15 @@
                         <a class="table__detail-button" href="{{ route('attendance.detail', [
                             'id' => $attendance['id'] ?? 'new',
                             'staff_id' => $attendance['user_id'] ?? $user->id, 
-                            'date' => $attendance['date']->toDateString(),
+                            'date' => $attendance['work_date'] ?? now()->toDateString(),
                         ]) }}">詳細</a>
                     </td>
                 </tr>
                 @endforeach
             </table>
-            <form action="">
+            <form action="{{ route('admin.attendance.staff.csv', ['id' => $user->id]) }}" method="post">
+                @csrf
+                <input type="hidden" name="date" value="{{ $targetDate->toDateString() }}">
                 <div class="form__button">
                     <input class="form__button-scv" type="submit" value="CSV出力" name="csv">
                 </div>

@@ -54,36 +54,38 @@ class UsersTableSeeder extends Seeder
             ],
         ]);
 
-        $testUsers = [
-            [
-                'name' => '一般ユーザー',
-                'email' => 'user@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'name' => '勤務外ユーザー',
-                'email' => 'off@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'name' => '出勤中ユーザー',
-                'email' => 'working@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'name' => '休憩中ユーザー',
-                'email' => 'break@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'name' => '退勤済みユーザー',
-                'email' => 'end@example.com',
-                'password' => Hash::make('password123'),
-            ],
-        ];
+        if (app()->environment('testing')) {
+            $testUsers = [
+                [
+                    'name' => '一般ユーザー',
+                    'email' => 'user@example.com',
+                    'password' => Hash::make('password123'),
+                ],
+                [
+                    'name' => '勤務外ユーザー',
+                    'email' => 'off@example.com',
+                    'password' => Hash::make('password123'),
+                ],
+                [
+                    'name' => '出勤中ユーザー',
+                    'email' => 'working@example.com',
+                    'password' => Hash::make('password123'),
+                ],
+                [
+                    'name' => '休憩中ユーザー',
+                    'email' => 'break@example.com',
+                    'password' => Hash::make('password123'),
+                ],
+                [
+                    'name' => '退勤済みユーザー',
+                    'email' => 'end@example.com',
+                    'password' => Hash::make('password123'),
+                ],
+            ];
 
-        foreach ($testUsers as $userData) {
-            User::create($userData);
+            foreach ($testUsers as $userData) {
+                User::create($userData);
+            }
         }
     }
 }

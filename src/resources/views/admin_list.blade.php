@@ -55,7 +55,11 @@
                         <td class="table__data">{{ $attendance->break_time_formatted }}</td>
                         <td class="table__data">{{ $attendance->work_time_formatted }}</td>
                         <td class="table__data">
-                            <a class="table__detail-button" href="{{ route('attendance.detail', ['id' => $attendance->id, 'date' => optional($attendance->date)->toDateString() ]) }}">詳細</a>
+                            <a class="table__detail-button" href="{{ route('attendance.detail', [
+                            'id' => $attendance['id'] ?? 'new',
+                            'staff_id' => $attendance['user_id'] ?? $user->id, 
+                            'date' => $attendance['work_date'] ?? now()->toDateString(),
+                        ]) }}">詳細</a>
                         </td>
                     </tr>
                 @endforeach  

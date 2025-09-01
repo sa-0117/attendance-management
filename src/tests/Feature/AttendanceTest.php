@@ -247,29 +247,33 @@ class AttendanceTest extends TestCase
     }
 
     //勤怠一覧情報取得機能
-    //エラー発生中、修正必要！！！
     public function test_view_attendance_infomation()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        //勤怠登録
+        $attendance = Attendance::create([
+            'user_id' => $userGeneral->id,
+            'work_date' => now()->format('Y-m-d'),
+            'clock_in' => now()->copy()->subHours(8),
+            'clock_out' => now()->copy()->subHours(1), 
+        ]);
+
+        $attendance->breaks()->create([
+            'break_start' => now()->copy()->subHours(7),
+            'break_end' => now()->copy()->subHours(6),
+        ]);
+
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
-        $today = now()->format('m月d日');
-        $clockIn = now()->copy()->subHours(8)->format('H:i');
-        $clockOut = now()->copy()->subHours(1)->format('H:i');
-        $break1 = gmdate('H:i', 7200);
-        $break2 = gmdate('H:i', 1800);
-
-        $response->assertSee($today);
-        $response->assertSee($clockIn);
-        $response->assertSee($clockOut);
-
-        $break1 = '01:00';
-        $break2 = '00:30';
+        $response->assertSee(now()->format('m月d日'));
+        $response->assertSee(now()->copy()->subHours(8)->format('H:i')); 
+        $response->assertSee(now()->copy()->subHours(1)->format('H:i'));
+        $response->assertSee('01:00'); 
+        $response->assertSee('06:00');
         
-        $response->assertSee($break1);
-        $response->assertSee($break2);
     }
+
 
     public function test_current_month_attendance_list()
     {
@@ -422,6 +426,7 @@ class AttendanceTest extends TestCase
         }
     }
 
+    //勤怠詳細情報修正機能
     public function test_start_time_later_than_end_time_returns_error()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
@@ -441,8 +446,8 @@ class AttendanceTest extends TestCase
             route('attendance.request', ['id' => $attendance->id]),
             [
                 'work_date' => now()->format('Y-m-d'),
-                'clock_in' => '09:00',
-                'clock_out' => '18:00',
+                'clock_in' => '18:00',
+                'clock_out' => '09:00',
             ]
         );
 
@@ -503,7 +508,7 @@ class AttendanceTest extends TestCase
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
                 'breaks' => [
-                    ['start' => '19:00', 'end' => '20:00'], 
+                    ['start' => '17:30', 'end' => '18:30'], 
                 ],
             ]
         );
@@ -711,13 +716,6 @@ class AttendanceTest extends TestCase
             ->assertStatus(200)
             ->assertSee('テスト');
     }
-
-        
-
-
-
-
-
 }
 
 

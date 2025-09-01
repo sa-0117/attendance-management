@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Models\Attendance;
 use App\Models\User;
 
-class AttendancesTableSeeder extends Seeder
+class TestAttendancesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -56,6 +56,7 @@ class AttendancesTableSeeder extends Seeder
 
         $userGeneral = User::where('email', 'user@example.com')->first();
 
+        //現在の勤怠データ
         $attendance = Attendance::create([
             'user_id'   => $userGeneral->id,
             'work_date' => $now->format('Y-m-d'),
@@ -72,6 +73,26 @@ class AttendancesTableSeeder extends Seeder
         $attendance->breaks()->create([
             'break_start' => $now->copy()->subHours(3),
             'break_end' => $now->copy()->subHours(2)->subMinutes(30),
+        ]);
+
+        //前月
+        $prevMonthDate = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+        $attendance = Attendance::create([
+            'user_id'   => $userGeneral->id,
+            'work_date' => $prevMonthDate,
+            'clock_in'  => $now->copy()->subMonth()->endOfMonth()->subHours(8), 
+            'clock_out' => $now->copy()->subMonth()->endOfMonth()->subHours(1),
+            'status'    => 'end',
+        ]);
+
+        //翌月
+        $nextMonthDate = Carbon::now()->addMonth()->startOfMonth()->format('Y-m-d');
+        $attendance = Attendance::create([
+            'user_id'   => $userGeneral->id,
+            'work_date' => $nextMonthDate,
+            'clock_in'  => $now->copy()->addMonth()->startOfMonth()->subHours(8), 
+            'clock_out' => $now->copy()->addMonth()->endOfMonth()->subHours(1),
+            'status'    => 'end',
         ]);
     }
 }
