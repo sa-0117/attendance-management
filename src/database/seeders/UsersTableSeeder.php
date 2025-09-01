@@ -21,36 +21,36 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => '西 伶奈',
                 'email' => 'reina.n@coachtech.com',
-                'password' => Hash::make('reinapassword'),
+                'password' => Hash::make('password'),
             ],
             [
                 'name' => '山田 太郎',
                 'email' => 'taro.y@coachtech.com',
-                'password' => Hash::make('taropassword'),            
+                'password' => Hash::make('password'),            
             ],
 
             [
                 'name' => '増田 一世',
                 'email' => 'issei.m@coachtech.com',
-                'password' => Hash::make('isseipassword'),  
+                'password' => Hash::make('password'),  
             ],
 
             [
                 'name' => '山本 敬吉',
                 'email' => 'keikichi.y@coachtech.com',
-                'password' => Hash::make('keikichipassword'),  
+                'password' => Hash::make('password'),  
             ],
 
             [
                 'name' => '秋田 明美',
                 'email' => 'tomomi.a@coachtech.com',
-                'password' => Hash::make('tomomipassword'),  
+                'password' => Hash::make('password'),  
             ],
 
             [
                 'name' => '中西 教夫',
                 'email' => 'norio.n@coachtech.com',
-                'password' => Hash::make('noriopassword'),  
+                'password' => Hash::make('password'),  
             ],
         ]);
 
