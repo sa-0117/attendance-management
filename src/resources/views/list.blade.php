@@ -62,7 +62,10 @@
                         @endif 
                     </td>
                     <td class="table__data">
-                        <a class="table__detail-button" href="{{ route('attendance.detail', ['id' => $attendance['id'] ?? 0, 'date' => $attendance['date']->toDateString() ]) }}">詳細</a>
+                        <a class="table__detail-button" href="{{ route('attendance.detail', [
+                            'id' => $attendance['id'] ?? 'new',
+                            'date' => $attendance['work_date'] ?? now()->toDateString(),
+                        ]) }}">詳細</a>
                     </td>
                 </tr>
                 @endforeach

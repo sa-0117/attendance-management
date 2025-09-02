@@ -10,7 +10,7 @@
             <div class="attendance-list__heading">
                 <h1>勤怠詳細</h1>
             </div>
-            <form class="detail-form" action="{{ route('attendance.request', ['id' => $attendance->id]) }}" method="post">
+            <form class="detail-form" action="{{ route('attendance.request', ['id' => $attendance->id ?? 'new'])  }}" method="post">
                 @csrf
                 <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
                 <input type="hidden" name="work_date" value="{{ $attendance->work_date }}" >
