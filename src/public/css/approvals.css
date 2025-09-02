@@ -1,6 +1,6 @@
 .detail-form__label,
 .detail-form__data {
-    padding: 30px 58px;
+    padding: 20px 40px;
 }
 
 .detail-form__data input,
@@ -29,3 +29,4 @@
     padding: 10px 20px;
     
 }
+

@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="{{ asset('css/common.css')}}">
   @yield('css')
 </head>
-
 <body>
   <div class="app">
     <header class="header">

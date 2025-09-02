@@ -2,24 +2,35 @@ html,
 body {
     height: 100%;
     background: #efe9e9;
+    margin: 0;
+    padding: 0;
 }
 
 .app {
-    max-width: 1540px;
+    max-width: 100%;
+    margin: 0 auto;
+    height: 100%;   
+    display: flex;     
+    flex-direction: column;
 }
 
 .header {
     width: 100%;
     background: #000;
     color: #fff;
-    padding: 10px 0;
     text-align: center;
 }
 
 .header__inner {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0 20px;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
 }
 
 .header__logo a {
@@ -29,21 +40,13 @@ body {
 .header__logo img {
     height: 30px;
     object-fit: contain;
+    
 }
 
 .header__form {
     background: #fff;
     border: 1px solid #000;
     border-radius: 5px;
-}
-
-.header__form-search {
-    padding: 5px 15px;
-}
-
-.header__form-search input {
-    width: 500px;
-    color: #000;
 }
 
 .header-nav {
@@ -80,13 +83,16 @@ body {
     font-weight: bold;
 }
 
-
-@media (min-width: 1400px) and (max-width: 1500px) {
-    .header__form-search input {
-        width: 450px;
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .header__inner {
+        padding: 0 15px;
     }
 
     .header-nav__item:not(:last-child) {
-        margin-right: 25px;
+        margin-right: 20px;
+    }
+
+    .header__logo img {
+        height: 28px;
     }
 }

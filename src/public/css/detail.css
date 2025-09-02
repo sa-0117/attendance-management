@@ -1,6 +1,8 @@
 .attendance-list {
-    width: 70%;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .attendance-list__inner {
@@ -99,4 +101,19 @@
     color: #ff0000;
     text-align: left;
     font-size: 12px;
+}
+
+
+@media (max-width: 1400px) and (max-width: 1540px) {
+
+    .detail-form__label,
+    .detail-form__data {
+        padding: 15px 20px;
+        font-size: 14px;
+    }
+
+    .detail-form__data input,
+    .detail-form__data textarea {
+        font-size: 14px;
+    }
 }

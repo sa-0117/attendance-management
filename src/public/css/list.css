@@ -119,3 +119,38 @@
     text-decoration: none;
     color: #000;
 }
+
+@media (min-width: 1400px) and (max-width: 1540px) {
+
+    .attendance-list {
+        width: 80%;
+    }
+
+    .attendance-list__inner {
+        margin: 20px;
+    }
+
+    .monthly-group {
+        padding: 5px 10px;
+    }
+
+    .previous-month-arrow .leftarrow-icon,
+    .previous-month-arrow .rightarrow-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .attendance-list-table {
+        font-size: 14px;
+    }
+
+    .table__label,
+    .table__data {
+        padding: 6px 2px;
+    }
+
+    .table__detail-button {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+}

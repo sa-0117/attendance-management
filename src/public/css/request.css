@@ -26,3 +26,17 @@
 .border__tab a.active {
     color: #000;
 }
+
+
+@media (max-width: 1400px) {
+
+    .attendance-list-table th,
+    .attendance-list-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .border__tab {
+        gap: 30px;
+    }
+}
