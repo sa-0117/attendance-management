@@ -4,7 +4,7 @@
 
 ###Docerビルド  
 ```  
-git clone git@@github.com:sa-0117/attendance-management.git
+git clone git@github.com:sa-0117/attendance-management.git
 docker-compose up -d --build  
 ``` 
 
