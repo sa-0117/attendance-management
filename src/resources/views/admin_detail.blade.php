@@ -45,12 +45,14 @@
                                 <input type="text" name="clock_out" value="{{ old('clock_out', $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '') }}">
                             </div>
                             <div class="error-message">
-                                @error('clock_in')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                                @error('clock_out')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
+                                <div class="error-message-work">
+                                    @error('clock_in')
+                                        <p class="error-message">{{ $message }}</p>
+                                    @enderror
+                                    @error('clock_out')
+                                        <p class="error-message">{{ $message }}</p>
+                                    @enderror
+                                </div>
                             </div>  
                         </div>                                             
                     </div>
