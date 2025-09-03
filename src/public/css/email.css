@@ -1,0 +1,36 @@
+.container {
+    margin: 0 auto;
+    padding: 30px 15px;
+    max-width: 1540px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 30px 15px;
+    text-align: center;
+}
+
+.container__inner p {
+    font-weight: bold;
+}
+
+.email-certification {
+    margin: 40px;
+}
+
+.email-certification-link {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #b1b0b0f5;
+    color: #000;
+    padding: 10px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.email-resend-link {
+    list-style: none;
+    color: #3366ff;
+}

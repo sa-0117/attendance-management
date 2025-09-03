@@ -1,0 +1,129 @@
+.attendance-list {
+    width: 70%;
+    margin: 0 auto;
+    color: #000;
+}
+
+.attendance-list__inner {
+    margin: 40px;
+}
+
+.attendance-list__heading h1 {
+    padding-left: 15px;
+    border-left: 5px solid #000;
+}
+
+.detail-form__row {
+    display: flex;
+    border: none;
+    border-bottom: 2px solid #E0DFDE;
+    background: 
+    #fff;
+}
+
+.detail-form__group {
+    border: 1px solid #E0DFDE;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.detail-form__row:last-child {
+    border-bottom: none;
+}
+
+.detail-form__label,
+.detail-form__data {
+    padding: 20px 58px;
+}
+
+.detail-form__label {
+    width: 30%;
+    box-sizing: border-box;
+    color: #6d6d6d;
+    text-align: left;
+    font-weight: 400;
+}
+
+.detail-form__data {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+    color: #000;
+}
+
+.detail-form__data input,
+.detail-form__data textarea {
+    width: 100px;
+    border-radius: 3px;
+    border: 1px solid #6d6d6d;
+    opacity: 0.8;
+    font-weight: 400;
+    text-align: center;
+}
+
+.detail-form__data input[name="name"],
+.detail-form__data input[name="date[year]"],
+.detail-form__data input[name="date[day]"] {
+    border: none;
+}
+
+.data__inner {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.data__inner input,
+.data__inner textarea {
+    width: 100px;
+    border-radius: 3px;
+    border: 1px solid #6d6d6d;
+    opacity: 0.8;
+}
+
+.data__inner textarea {
+    width: 400px;
+    height: 80px;
+    text-align: left;
+}
+
+.detail-form__button {
+    text-align: right;
+    margin: 32px 0;
+}
+
+.detail-form__button p {
+    color: #ff0000;
+}
+
+.detail-form__button-back {
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: #000;
+    color: #FFF;
+    padding: 10px 20px;
+}
+
+.error-message {
+    min-height: 20px;
+    color: #ff0000;
+    text-align: left;
+    font-size: 12px;
+}
+
+
+@media (max-width: 1400px) and (max-width: 1540px) {
+
+    .detail-form__label,
+    .detail-form__data {
+        padding: 15px 20px;
+        font-size: 14px;
+    }
+
+    .detail-form__data input,
+    .detail-form__data textarea {
+        font-size: 14px;
+    }
+}
