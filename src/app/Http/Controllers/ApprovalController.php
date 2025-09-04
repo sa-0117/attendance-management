@@ -97,10 +97,21 @@ class ApprovalController extends Controller
     public function storeRequest(DetailRequest $request, $id)
     { 
         if ($id === 'new') {
-            $staffId = $request->input('staff_id');  // hidden input で staff_id を渡す
+            if (auth('admin')->check()) {
+                $userId = $request->input('staff_id'); 
+            } 
+            // 一般ユーザー
+            elseif (auth('web')->check()) {
+                $userId = auth('web')->id();
+            } 
+            else {
+                abort(403);
+            }
+
             $workDate = $request->input('work_date', now()->toDateString());
+
             $attendance = Attendance::create([
-                'user_id' => $staffId,
+                'user_id' => $userId,
                 'work_date' => $workDate,
                 'status' => 'off',
             ]);
