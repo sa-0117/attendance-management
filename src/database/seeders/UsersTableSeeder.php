@@ -52,7 +52,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         //test環境のみ
-        if (app()->environment('test')) {
+        if (app()->environment('testing')) {
             $testUsers = [
                 [
                     'name' => '勤務外ユーザー',

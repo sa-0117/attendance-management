@@ -12,7 +12,7 @@ class TestAttendancesTableSeeder extends Seeder
     public function run()
     {
         //test環境でのみ実行
-        if (!app()->environment('test')) return;
+        if (!app()->environment('testing')) return;
 
         $now = Carbon::now();
 
@@ -39,7 +39,7 @@ class TestAttendancesTableSeeder extends Seeder
                 'status' => $data['status'],
             ]);
 
-            // breaksはuser@example.com のみ
+            //breaksはuser@example.com のみ
             if ($email === 'user@example.com') {
                 $attendance->breaks()->createMany([
                     [
@@ -52,7 +52,7 @@ class TestAttendancesTableSeeder extends Seeder
                     ],
                 ]);
 
-                // 前月と翌月の勤怠も作成
+                //前月と翌月の勤怠も作成
                 $prevMonthDate = $now->copy()->subMonth()->endOfMonth()->format('Y-m-d');
                 $nextMonthDate = $now->copy()->addMonth()->startOfMonth()->format('Y-m-d');
 

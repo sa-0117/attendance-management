@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class DetailRequest extends FormRequest
 {
@@ -24,27 +25,52 @@ class DetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'clock_in'  => 'before:clock_out',
-            'clock_out' => 'after:clock_in',
-            'breaks.*.start' => 'nullable|after:clock_in|before:clock_out',
-            'breaks.*.end'   => 'nullable|after:clock_in|before:clock_out',
+            'breaks.*.start' => 'nullable',
+            'breaks.*.end'   => 'nullable',
             'remarks' => 'required',
         ];
     }
 
     public function messages()
     {
-        return [
-            'clock_in.before'   => '出勤時間が不適切な値です',
-            'clock_out.after'   => '退勤時間が不適切な値です',
+        return [ 'remarks.required' => '備考を記入してください' ];
+    }
 
-            'breaks.*.start.after' => '休憩時間が不適切な値です',
-            'breaks.*.start.before' => '休憩時間が不適切な値です',
+    public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+            $data = $this->all();
 
-            'breaks.*.end.after' => '休憩時間もしくは退勤時間が不適切な値です',
-            'breaks.*.end.before'  => '休憩時間もしくは退勤時間が不適切な値です',
+            $clockIn = $data['clock_in'] ?? null;
+            $clockOut = $data['clock_out'] ?? null;
 
-            'remarks.required' => '備考を記入してください',
-        ];
+            if ($clockIn && $clockOut && strtotime($clockIn) >= strtotime($clockOut)) {
+                $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
+                $validator->errors()->add('clock_out', '出勤時間もしくは退勤時間が不適切な値です');
+            }
+
+            if (!empty($data['breaks'])) {
+                foreach ($data['breaks'] as $index => $break) {
+                    $start = $break['start'] ?? null;
+                    $end   = $break['end'] ?? null;
+
+                    if ($start) {
+                        if ($clockIn && strtotime($start) < strtotime($clockIn)) {
+                            $validator->errors()->add("breaks.$index.start", '休憩時間が不適切な値です');
+                        }
+                        if ($clockOut && strtotime($start) > strtotime($clockOut)) {
+                            $validator->errors()->add("breaks.$index.start", '休憩時間が不適切な値です');
+                        }
+                    }
+
+                    if ($end) {
+                        if ($clockOut && strtotime($end) > strtotime($clockOut)) {
+                            $validator->errors()->add("breaks.$index.end", '休憩時間もしくは退勤時間が不適切な値です');
+                        }
+                    }
+                }
+            }
+
+        });
     }
 }

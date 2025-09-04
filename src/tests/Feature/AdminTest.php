@@ -184,7 +184,7 @@ class AdminTest extends TestCase
         );
 
         $response->assertSessionHasErrors([
-            'clock_in' => '出勤時間が不適切な値です',
+            'clock_in' => '出勤時間もしくは退勤時間が不適切な値です',
         ]);
     }
 

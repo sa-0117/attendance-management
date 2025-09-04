@@ -80,10 +80,9 @@ class AttendanceTest extends TestCase
 
         //出勤処理
         $response = $this->actingAs($userOff)->post(route('attendance.start'));
-        //出勤処理後勤怠画面へリダイレクトされることを確認
+ 
         $response->assertRedirect(route('attendance.form'));
         
-        //再度画面を表示して、ステータスが「出勤中」に変わったことを確認
         $response = $this->actingAs($userOff)->get(route('attendance.form'));
         $response->assertSee('出勤中');
     }
@@ -93,7 +92,7 @@ class AttendanceTest extends TestCase
         $userEnd = User::firstWhere('email', 'end@example.com');
 
         $response = $this->actingAs($userEnd)->get('/attendance');
-        $response->assertDontSee('出勤'); // 勤務ボタンがないことを確認
+        $response->assertDontSee('出勤');
     }
 
     public function test_clock_in_shows_in_attendance_list()
@@ -452,7 +451,7 @@ class AttendanceTest extends TestCase
         );
 
         $response->assertSessionHasErrors([
-            'clock_in' => '出勤時間が不適切な値です',
+            'clock_in' => '出勤時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
