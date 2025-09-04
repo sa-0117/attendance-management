@@ -167,40 +167,33 @@ class AttendanceController extends Controller
 
         if ($id === 'new' || $id == 0) {
             $staffId = $request->query('staff_id');
-            $workDate = $request->query('date', now()->toDateString());
-
+            $workDate = $request->query('date'); 
+            if (!$workDate) {
+                abort(400);
+            }
             $attendance = new Attendance([
                 'user_id' => $staffId,
                 'work_date' => $workDate,
                 'status' => 'off',
             ]);
             $user = User::find($staffId);
-
         } else {
             $attendance = Attendance::with('breaks', 'approval', 'user')->find($id);
-
-            if (!$attendance) {
-                abort(404);
-            }
-
+            if (!$attendance) abort(404);
             $user = $attendance->user;
         }
 
-        // BreakTime 初期化（最低2枠）
+        //BreakTime初期化
         $breaks = collect($attendance->breaks ?? []);
         if ($breaks->isEmpty()) {
-            $breaks = collect([
-                new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])
-            ]);
+            $breaks = collect([new \App\Models\BreakTime(['break_start' => null, 'break_end' => null])]);
         }
-
         $minBreaks = 2;
         for ($i = $breaks->count(); $i < $minBreaks; $i++) {
             $breaks->push(new \App\Models\BreakTime(['break_start' => null, 'break_end' => null]));
         }
         $attendance->setRelation('breaks', $breaks);
 
-        // 承認保留の取得
         $pendingApproval = Approval::where('attendance_id', $attendance->id ?? 0)
             ->where('status', 'pending')
             ->latest('id')
@@ -211,12 +204,12 @@ class AttendanceController extends Controller
             'user' => $attendance->user ?? User::find($staffId),
             'id' => $attendance->user->id ?? $staffId,
             'approval' => $pendingApproval,
-            'breaks' => $breaks
+            'breaks' => $breaks,
         ]);
     }
 
 
-    // 一般ユーザーログイン時
+    //一般ユーザーログイン
     if (auth('web')->check()) {
         $user = auth('web')->user();
 
@@ -234,7 +227,6 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // BreakTime 初期化
         $pendingApproval = Approval::where('attendance_id', $attendance->id ?? 0)
             ->where('status', 'pending')
             ->first();
@@ -256,7 +248,6 @@ class AttendanceController extends Controller
             ]) : collect($attendance->breaks);
         }
 
-        // 最低 2 枠確保
         $minBreaks = 2;
         for ($i = $breaks->count(); $i < $minBreaks; $i++) {
             $breaks->push(new \App\Models\BreakTime([
@@ -296,14 +287,14 @@ class AttendanceController extends Controller
             ]);
         }
 
-        // Attendance の基本情報を更新
+        //Attendance情報を更新
         $attendance->update([
             'clock_in' => $request->clock_in,
             'clock_out' => $request->clock_out,
             'remarks' => $request->remarks,
         ]);
 
-        // 既存 BreakTime を削除して再作成
+        //BreakTime を削除して再作成
         $attendance->breaks()->delete();
         foreach ($request->breaks ?? [] as $break) {
             if (!empty($break['start']) || !empty($break['end'])) {
@@ -314,7 +305,6 @@ class AttendanceController extends Controller
             }
         }
 
-        // 最低2枠の BreakTime を保証（更新後のビュー用）
         $breaks = $attendance->breaks;
         $minBreaks = 2;
         for ($i = $breaks->count(); $i < $minBreaks; $i++) {
