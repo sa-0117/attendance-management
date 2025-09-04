@@ -66,7 +66,7 @@
                         <a class="table__detail-button" href="{{ route('attendance.detail', [
                             'id' => $attendance['id'] ?? 'new',
                             'staff_id' => $attendance['user_id'] ?? $user->id, 
-                            'date' => $attendance['work_date'] ?? now()->toDateString(),
+                            'date' => $attendance['date']->format('Y-m-d'), 
                         ]) }}">詳細</a>
                     </td>
                 </tr>
