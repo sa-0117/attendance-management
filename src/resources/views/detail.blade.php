@@ -12,6 +12,7 @@
             </div>
             <form class="detail-form" action="{{ route('attendance.request', ['id' => $attendance->id ?? 'new'])  }}" method="post">
                 @csrf
+                <input type="hidden" name="user_id" value="{{ $user->id }}">
                 <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
                 <input type="hidden" name="work_date" value="{{ $attendance->work_date }}" >
                 <div class="detail-form__group">
