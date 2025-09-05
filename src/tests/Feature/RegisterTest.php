@@ -17,7 +17,6 @@ class RegisterTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    /** @test */
     public function test_register_user()
     {   
         $response = $this->post('/register', [
