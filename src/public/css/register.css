@@ -4,6 +4,7 @@
     max-width: 1540px;
     width: 100%;
     box-sizing: border-box;
+    background: #fff;
 }
 
 .register-form__heading {
