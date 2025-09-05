@@ -19,11 +19,12 @@ class AuthAnyGuard
     {
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                Auth::shouldUse($guard);
+                if ($guard === 'web' && ! $request->user('web')->hasVerifiedEmail()) {
+                    return redirect()->route('verification.notice');
+                }
                 return $next($request);
             }
         }
-
-        abort(403, 'Unauthorized'); 
+        return redirect()->route('login');
     }
 }

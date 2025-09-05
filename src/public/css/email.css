@@ -10,6 +10,7 @@
     height: 100vh;
     padding: 30px 15px;
     text-align: center;
+    background: #fff;
 }
 
 .container__inner p {
@@ -31,6 +32,7 @@
 }
 
 .email-resend-link {
-    list-style: none;
+    border: none;
     color: #3366ff;
+    background: #fff;
 }
