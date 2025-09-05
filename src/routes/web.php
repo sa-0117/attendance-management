@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware(['auth:web'])->group(function (){
+Route::middleware(['auth:web', 'verified'])->group(function (){
     Route::get('/attendance',[AttendanceController::class,'showAttendanceStatus'])->name('attendance.form');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('list.now');
     Route::get('/attendance/list/{date?}', [AttendanceController::class, 'index'])->name('attendance.list');
