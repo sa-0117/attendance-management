@@ -49,7 +49,7 @@
         </form>
       @elseif ($status === 'end')
         <div class="atttendance-end-comment">
-          <p>お疲れ様でした</p>
+          <p>お疲れ様でした。</p>
         </div>
       @endif
     </div>    

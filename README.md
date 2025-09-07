@@ -23,10 +23,23 @@ php artisan db:seed
 * PHP 7.4.9
 * Laravel 8.83.8 
 * MySQL 8.0  
+* Mailtrap
+
 
 ##ER図
 
 ![er](https://github.com/user-attachments/assets/138491c1-1bd0-4d85-9709-101de566b42e)
+
+##メール認証
+
+mailtrapを使用しています。以下のリンクより会員登録をお願いします。
+
+https://mailtrap.io/
+
+メールボックスのIntegrationのCode Samples「PHP:Laravel 7.x and 8.x」を選択し、MAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピーして.envファイルにペーストしてください。
+
+MAIL_FROM_ADDRESSについては任意のメールアドレスを入力してください。
+
 
 ##テストアカウント
 
@@ -39,7 +52,7 @@ php artisan db:seed
   email：testadmin@example.com
   password：adminpassword
 
-  ###PHPUnitを利用したテストについて
+###PHPUnitを利用したテストについて
   ```
   docker-compose exec mysql bash
   mysql -u root -p
@@ -51,28 +64,7 @@ php artisan db:seed
   ```
   ※mysqlのパスワードは「root」
 
-  ####テスト内のテストアカウント
-  * ステータスが勤務外のユーザー
-    name: 勤務外ユーザー
-    email：off@example.com
-    password：password123
 
-  * ステータスが出勤中のユーザー
-    name: 出勤中ユーザー
-    email：working@example.com
-    password：password123
-
-
-  * ステータスが休憩中のユーザー
-    name: 休憩中ユーザー
-    email：break@example.com
-    password：password123
-  
-  * ステータスが退勤済のユーザー
-    name: 退勤済みユーザー
-    email：end@example.com
-    password：password123
-  
 
 ##URL  
 

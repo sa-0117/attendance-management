@@ -116,7 +116,7 @@ class AttendanceController extends Controller
             ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
             ->get()
             ->keyBy(function($item) {
-                return \Carbon\Carbon::parse($item->work_date)->format('Y-m-d');
+                return Carbon::parse($item->work_date)->format('Y-m-d');
             });
 
         $week =['日','月','火','水','木','金','土'];
@@ -131,7 +131,7 @@ class AttendanceController extends Controller
             if ($attendance && $attendance->breaks) {
                 foreach ($attendance->breaks as $break) {
                     if ($break->break_start && $break->break_end) {
-                        $breakSeconds += Carbon::parse($break->break_end)->diffInSeconds($break->break_start);
+                        $breakSeconds += max(0, Carbon::parse($break->break_end)->diffInSeconds(Carbon::parse($break->break_start)));
                     }
                 }
             }
@@ -139,7 +139,9 @@ class AttendanceController extends Controller
             // 勤務時間
             $workSeconds = 0;
             if ($attendance && $attendance->clock_in && $attendance->clock_out) {
-                $workSeconds = Carbon::parse($attendance->clock_in)->diffInSeconds(Carbon::parse($attendance->clock_out)) - $breakSeconds;
+                $workSeconds = Carbon::parse($attendance->clock_out)->diffInSeconds(Carbon::parse($attendance->clock_in)) - $breakSeconds;
+
+
                 $workSeconds = max(0, $workSeconds);
             }
 
@@ -249,7 +251,17 @@ class AttendanceController extends Controller
         }
 
         $minBreaks = 2;
-        for ($i = $breaks->count(); $i < $minBreaks; $i++) {
+        while ($breaks->count() < $minBreaks) {
+            $breaks->push(new \App\Models\BreakTime([
+                'break_start' => null,
+                'break_end' => null,
+            ]));
+        }
+
+        $hasEmpty = $breaks->contains(function ($b) {
+            return empty($b->break_start) || empty($b->break_end);
+        });
+        if (!$hasEmpty) {
             $breaks->push(new \App\Models\BreakTime([
                 'break_start' => null,
                 'break_end' => null,

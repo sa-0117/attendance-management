@@ -28,7 +28,9 @@
                             <img src="{{ asset('image/calendar.svg') }}"  alt="カレンダー" class="calendar-icon">
                             <input  type="date" name="date">
                         </div>
-                        <p>{{ $targetDate->format('Y/m') }}</p>
+                        <div class="calendar-date">
+                            <p>{{ $targetDate->format('Y/m') }}</p>
+                        </div>
                     </div>
                     <div class="previous-month-arrow">
                         <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'date'=> $next]) }}">
@@ -49,7 +51,7 @@
                 </tr>
                 @foreach($attendances as $attendance)
                 <tr class="table__row">
-                    <td class="table__data">{{ $attendance['date']->format('m月d日') }}（{{ $attendance['day_of_week'] }}）</td>
+                    <td class="table__data">{{ $attendance['date']->format('m/d') }}（{{ $attendance['day_of_week'] }}）</td>
                     <td class="table__data">{{ optional($attendance['clock_in'])->format('H:i') ?? '' }}</td>
                     <td class="table__data">{{ optional($attendance['clock_out'])->format('H:i') ?? '' }}</td>
                     <td class="table__data">
