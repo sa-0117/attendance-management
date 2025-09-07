@@ -38,9 +38,9 @@
                         <label class="detail-form__label" for="attendance">出勤・退勤</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <input type="text" name="clock_in" value="{{ old('clock_in', $approval->clock_in ? \Carbon\Carbon::parse($approval->clock_in)->format('H:i') : '') }}" readonly>
+                                <span class="readonly-field">{{ $approval->clock_in ? \Carbon\Carbon::parse($approval->clock_in)->format('H:i') : '' }}</span>
                                 <span>～</span>
-                                <input type="text" name="clock_out" value="{{ old('clock_out', $approval->clock_out ? \Carbon\Carbon::parse($approval->clock_out)->format('H:i') : '') }}" readonly>
+                                <span class="readonly-field">{{ $approval->clock_out ? \Carbon\Carbon::parse($approval->clock_out)->format('H:i') : '' }}</span>
                             </div>
                         </div>                                             
                     </div>
@@ -51,9 +51,9 @@
                             </label>
                             <div class="detail-form__data">
                                 <div class="data__inner">
-                                    <input type="text" name="breaks[{{ $index }}][start]" value="{{ $break['start'] ? \Carbon\Carbon::parse($break['start'])->format('H:i') : '' }}"readonly>
+                                    <span class="readonly-field">{{ $break['start'] ? \Carbon\Carbon::parse($break['start'])->format('H:i') : '' }}</span>
                                     <span>～</span>
-                                    <input type="text" name="breaks[{{ $index }}][end]" value="{{ $break['end'] ? \Carbon\Carbon::parse($break['end'])->format('H:i') : '' }}"readonly>
+                                    <span class="readonly-field">{{ $break['end'] ? \Carbon\Carbon::parse($break['end'])->format('H:i') : '' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -62,7 +62,7 @@
                         <label class="detail-form__label" for="remarks">備考</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <textarea readonly name="remarks" id="remarks">{{ old('remarks', $approval->remarks) }} </textarea>
+                                <span class="readonly-field">{{ $approval->remarks }}</span>
                             </div>
                         </div>                                               
                     </div>

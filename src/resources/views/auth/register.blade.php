@@ -16,7 +16,7 @@
     <form class="register-form__form" action="{{ route('register') }}" method="post">
       @csrf
         <div class="register-form__group">
-          <label class="register-form__label" for="name">ユーザー名</label>          
+          <label class="register-form__label" for="name">名前</label>          
           <input class="register-form__input" type="text" name="name" id="name" value="{{ old('name') }}">
           @error('name')
             <div class="register-form__error-message">{{ $message }}</div>
@@ -37,7 +37,7 @@
           @enderror
         </div>
         <div class="register-form__group">
-          <label class="register-form__label" for="password_confirmation">確認用パスワード</label>          
+          <label class="register-form__label" for="password_confirmation">パスワード確認</label>          
           <input class="register-form__input" type="password" name="password_confirmation" id="password_confirmation">
           @error('password_confirmation') 
             <div class="register-form__error-message">{{ $message }}</div>

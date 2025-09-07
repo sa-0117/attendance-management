@@ -19,8 +19,16 @@ class AuthAnyGuard
     {
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if ($guard === 'web' && ! $request->user('web')->hasVerifiedEmail()) {
-                    return redirect()->route('verification.notice');
+
+                if ($guard === 'admin') {
+                    return $next($request);
+                }
+                
+                if ($guard === 'web') {
+                    $user = $request->user('web');
+                    if ($user && ! $user->hasVerifiedEmail()) {
+                        return redirect()->route('verification.notice');
+                    }
                 }
                 return $next($request);
             }

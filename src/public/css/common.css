@@ -86,11 +86,11 @@ body {
 
 @media (min-width: 1400px) and (max-width: 1540px) {
     .header__inner {
-        padding: 0 15px;
+        padding: 15px;
     }
 
-    .header-nav__item:not(:last-child) {
-        margin-right: 20px;
+    .header-nav {
+        font-size: 18px;
     }
 
     .header__logo img {

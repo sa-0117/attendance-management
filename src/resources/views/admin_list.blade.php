@@ -27,7 +27,9 @@
                             <img src="{{ asset('image/calendar.svg') }}"  alt="カレンダー" class="calendar-icon">
                             <input  type="date" name="date">
                         </div>
-                        <p>{{ $targetDate->format('Y/m/d') }}</p>
+                        <div class="calendar-date">
+                            <p>{{ $targetDate->format('Y/m/d') }}</p>
+                        </div>
                     </div>
                     <div class="previous-month-arrow">
                         <a href="{{ route('attendance.admin.list', ['date' => $next]) }}">

@@ -16,13 +16,12 @@
 .detail-form__row {
     display: flex;
     border: none;
-    border-bottom: 2px solid #E0DFDE;
-    background: 
-    #fff;
+    border-bottom: 3px solid #E0DFDE;
+    background: #fff;
 }
 
 .detail-form__group {
-    border: 1px solid #E0DFDE;
+    border: 2px solid #E0DFDE;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -61,12 +60,13 @@
     opacity: 0.8;
     font-weight: 400;
     text-align: center;
+    color: #000;
 }
 
 .detail-form__data input[name="name"],
 .detail-form__data input[name="date[year]"],
 .detail-form__data input[name="date[day]"] {
-    border: none;
+    border: 1px solid transparent; 
 }
 
 .data__inner {
@@ -79,8 +79,15 @@
 .data__inner textarea {
     width: 100px;
     border-radius: 3px;
-    border: 1px solid #6d6d6d;
+    border: 1px solid rgba(193, 193, 193, 0.7);
     opacity: 0.8;
+}
+
+.readonly-field {
+    display: inline-block;
+    width: 100px;
+    border: 1px solid transparent;
+    text-align: center;
 }
 
 .data__inner textarea {
@@ -121,15 +128,12 @@
 
 
 @media (max-width: 1400px) and (max-width: 1540px) {
-
-    .detail-form__label,
-    .detail-form__data {
-        padding: 15px 20px;
-        font-size: 14px;
-    }
-
     .detail-form__data input,
     .detail-form__data textarea {
         font-size: 14px;
+    } 
+
+    .readonly-field {
+        font-size: 14px; 
     }
 }

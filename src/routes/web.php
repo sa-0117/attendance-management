@@ -29,7 +29,7 @@ Route::middleware(['auth:web', 'verified'])->group(function (){
     Route::get('/attendance/list/{period}',[AttendanceController::class,'index'])->name('list.period');
 });
 
-Route::middleware(['auth.any:web,admin'])->group(function () {
+Route::middleware(['auth.any:admin,web'])->group(function () {
     Route::get('/attendance/{id}', [AttendanceController::class, 'showFormDetail'])
         ->name('attendance.detail');
     Route::post('/attendance/{id}', [ApprovalController::class, 'storeRequest'])
@@ -38,7 +38,7 @@ Route::middleware(['auth.any:web,admin'])->group(function () {
         ->name('attendance.update');
 });
 
-Route::middleware(['auth.any:web,admin'])->group(function () {
+Route::middleware(['auth.any:admin,web'])->group(function () {
     Route::get('/stamp_correction_request/list',[ApprovalController::class,'requestList'])
         ->name('request.list');
     Route::post('/stamp_correction_request/list', [ApprovalController::class,'requestList'])

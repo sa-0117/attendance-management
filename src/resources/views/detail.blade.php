@@ -38,9 +38,15 @@
                         <label class="detail-form__label" for="attendance">出勤・退勤</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <input type="text" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
-                                <span>～</span>
-                                <input type="text" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
+                                @if( $approval && $approval->status === 'pending')
+                                    <span class="readonly-field">{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</span>
+                                    <span>～</span>
+                                    <span class="readonly-field">{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</span>
+                                @else
+                                    <input type="text" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
+                                    <span>～</span>
+                                    <input type="text" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
+                                @endif
                             </div>
                             @if($errors->has('clock_in') || $errors->has('clock_out'))
                                 <p class="error-message">{{ $errors->first('clock_in') ?: $errors->first('clock_out') }}</p>
@@ -52,9 +58,15 @@
                             <label class="detail-form__label" for="break_{{ $index }}">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</label>
                             <div class="detail-form__data">
                                 <div class="data__inner">
-                                    <input type="text" name="breaks[{{ $index }}][start]" value="{{ old("breaks.$index.start", $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
-                                    <span>～</span>
-                                    <input type="text" name="breaks[{{ $index }}][end]" value="{{ old("breaks.$index.end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
+                                    @if( $approval && $approval->status === 'pending')
+                                        <span class="readonly-field">{{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '' }}</span>
+                                        <span>～</span>
+                                        <span class="readonly-field">{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '' }}<span>
+                                    @else
+                                        <input type="text" name="breaks[{{ $index }}][start]" value="{{ old("breaks.$index.start", $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
+                                        <span>～</span>
+                                        <input type="text" name="breaks[{{ $index }}][end]" value="{{ old("breaks.$index.end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
+                                    @endif
                                 </div>
                                 @if($errors->has("breaks.$index.start"))
                                     <p class="error-message">{{ $errors->first("breaks.$index.start") }}</p>
@@ -69,7 +81,11 @@
                         <label class="detail-form__label" for="remarks">備考</label>
                         <div class="detail-form__data">
                             <div class="data__inner">
-                                <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
+                                @if( $approval && $approval->status === 'pending')
+                                    <p class="readonly-field">{{ $attendance->remarks }}</p>
+                                @else
+                                    <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
+                                @endif
                             </div>
                             @error('remarks')
                                 <p class="error-message">{{ $message }}</p>
@@ -79,7 +95,7 @@
                 </div>
                 <div class="detail-form__button">
                     @if($approval && $approval->status === 'pending')
-                        <p>承認待ちのため修正はできません。</p>
+                        <p>*承認待ちのため修正はできません。</p>
                     @else
                         <input class="detail-form__button-back" type="submit" value="修正" name="back">
                     @endif
