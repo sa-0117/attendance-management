@@ -129,11 +129,8 @@
 
 @media (max-width: 1400px) and (max-width: 1540px) {
     .detail-form__data input,
-    .detail-form__data textarea {
+    .detail-form__data textarea,
+    .readonly-field {
         font-size: 14px;
     } 
-
-    .readonly-field {
-        font-size: 14px; 
-    }
 }

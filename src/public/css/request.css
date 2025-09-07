@@ -28,7 +28,7 @@
 }
 
 
-@media (max-width: 1400px) {
+@media (max-width: 1400px)and (max-width: 1540px) {
 
     .attendance-list-table th,
     .attendance-list-table td {
