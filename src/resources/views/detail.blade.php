@@ -82,7 +82,7 @@
                         <div class="detail-form__data">
                             <div class="data__inner">
                                 @if( $approval && $approval->status === 'pending')
-                                    <p class="readonly-field">{{ $attendance->remarks }}</p>
+                                    <p class="readonly-field-remarks">{{ $attendance->remarks }}</p>
                                 @else
                                     <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
                                 @endif
@@ -98,6 +98,9 @@
                         <p>*承認待ちのため修正はできません。</p>
                     @else
                         <input class="detail-form__button-back" type="submit" value="修正" name="back">
+                    @endif
+                    @if($approval && $approval->status === 'approved')
+                        <button disabled class="form__button-approved" type="submin">承認済み</button>
                     @endif
                 </div>
             </form>

@@ -44,16 +44,9 @@
                                 <span>～</span>
                                 <input type="text" name="clock_out" value="{{ old('clock_out', $attendance['clock_out'] ? \Carbon\Carbon::parse($attendance['clock_out'])->format('H:i') : '') }}">
                             </div>
-                            <div class="error-message">
-                                <div class="error-message-work">
-                                    @error('clock_in')
-                                        <p class="error-message">{{ $message }}</p>
-                                    @enderror
-                                    @error('clock_out')
-                                        <p class="error-message">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>  
+                            @if($errors->has('clock_in') || $errors->has('clock_out'))
+                                <p class="error-message">{{ $errors->first('clock_in') ?: $errors->first('clock_out') }}</p>
+                            @endif
                         </div>                                             
                     </div>
                     @foreach($attendance->breaks ?? [] as $index => $break)
@@ -65,14 +58,12 @@
                                     <span>～</span>
                                     <input type="text" name="breaks[{{ $index }}][end]" value="{{ old("breaks.$index.end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
                                 </div>
-                                <div class="error-message">
-                                    @error("breaks.$index.start")
-                                        <div class="error-message">{{ $message }}</div>
-                                    @enderror
-                                    @error("breaks.$index.end")
-                                        <div class="error-message">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                @if($errors->has("breaks.$index.start"))
+                                    <p class="error-message">{{ $errors->first("breaks.$index.start") }}</p>
+                                @endif
+                                @if($errors->has("breaks.$index.end"))
+                                    <p class="error-message">{{ $errors->first("breaks.$index.end") }}</p>
+                                @endif
                             </div>
                         </div>
                     @endforeach                   
@@ -82,11 +73,9 @@
                             <div class="data__inner">
                                 <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
                             </div>
-                            <div class="error-message">
-                                @error('remarks')
-                                    <div class="error-message">{{ $message }}</div>
-                                @enderror
-                            </div> 
+                            @error('remarks')
+                                <p class="error-message">{{ $message }}</p>
+                            @enderror
                         </div>                                               
                     </div>
                 </div>
