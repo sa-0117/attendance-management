@@ -73,7 +73,7 @@ class AdminTest extends TestCase
         //URLパラメータ用
         $prevDateParam = $currentDate->copy()->subDay()->toDateString();
         //blade上の表示用
-        $prevDateTitle = $currentDate->copy()->subDay()->format('Y年n月j日'); // タイトルh1の形式
+        $prevDateTitle = $currentDate->copy()->subDay()->format('Y年n月j日');
         $prevDateInline = $currentDate->copy()->subDay()->format('Y/m/d'); 
 
         $response = $this->actingAs($userAdmin, 'admin')->get(route('attendance.admin.list', ['date' => $prevDateParam]));

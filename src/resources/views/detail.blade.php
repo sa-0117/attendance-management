@@ -99,9 +99,6 @@
                     @else
                         <input class="detail-form__button-back" type="submit" value="修正" name="back">
                     @endif
-                    @if($approval && $approval->status === 'approved')
-                        <button disabled class="form__button-approved" type="submin">承認済み</button>
-                    @endif
                 </div>
             </form>
         </div>

@@ -115,6 +115,8 @@ class AdminController extends Controller
         $attendances = Attendance::with('breaks')
             ->where('user_id', $user->id)
             ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
+            ->whereNotNull('clock_in')
+            ->whereNotNull('clock_out')
             ->get();
 
         $csvHeader = ['日付', '出勤', '退勤', '休憩時間', '合計'];

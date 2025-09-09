@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\DatabaseSeeder;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Notification;
 use App\Models\User;
 use App\Models\Attendance;
 use App\Models\Admin;
 use App\Models\Approval;
-use Database\Seeders\DatabaseSeeder;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
 
 class AttendanceTest extends TestCase
@@ -28,6 +31,9 @@ class AttendanceTest extends TestCase
     public function test_get_date_and_time()
     {
         $user = User::firstWhere('email', 'user@example.com');
+
+        $user->forceFill(['email_verified_at' => now()])->save();
+        $user = $user->fresh();
 
         $today = now()->format('Y年n月j日');
         $dayOfWeek = ['日','月','火','水','木','金','土'][now()->dayOfWeek];
@@ -201,7 +207,7 @@ class AttendanceTest extends TestCase
         $response = $this->actingAs($userWorking)->get('/attendance/list');
 
         //休憩の日付取得
-        $attendanceDate = $attendance->work_date->format('m月d日');
+        $attendanceDate = $attendance->work_date->format('m/d');
         $response->assertSee($attendanceDate);
     }
 
@@ -241,7 +247,7 @@ class AttendanceTest extends TestCase
 
         $response = $this->actingAs($userOff)->get('/attendance/list');
 
-        $today = now()->format('m月d日');
+        $today = now()->format('m/d');
         $response->assertSee($today);
     }
 
@@ -249,6 +255,9 @@ class AttendanceTest extends TestCase
     public function test_view_attendance_infomation()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
 
         //勤怠登録
         $attendance = Attendance::create([
@@ -265,7 +274,7 @@ class AttendanceTest extends TestCase
 
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
-        $response->assertSee(now()->format('m月d日'));
+        $response->assertSee(now()->format('m/d'));
         $response->assertSee(now()->copy()->subHours(8)->format('H:i')); 
         $response->assertSee(now()->copy()->subHours(1)->format('H:i'));
         $response->assertSee('01:00'); 
@@ -278,6 +287,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
         $currentMonth = now()->format('Y/m');
@@ -288,6 +301,10 @@ class AttendanceTest extends TestCase
     public function test_previous_month_attendance_list()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -307,6 +324,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
         $currentMonth = now();
@@ -324,6 +345,10 @@ class AttendanceTest extends TestCase
     public function test_attendance_details_transition()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $response = $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -345,6 +370,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -363,6 +392,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -380,6 +413,10 @@ class AttendanceTest extends TestCase
     public function test_clock_in_clock_out_shows_in_attendance_detail_list()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -405,6 +442,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -429,6 +470,10 @@ class AttendanceTest extends TestCase
     public function test_start_time_later_than_end_time_returns_error()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -458,6 +503,10 @@ class AttendanceTest extends TestCase
         public function test_start_break_time_later_than_end_time_returns_error()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -490,6 +539,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -520,6 +573,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -544,6 +601,10 @@ class AttendanceTest extends TestCase
     public function test_user_can_create_correction_request()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
 
         $this->actingAs($userGeneral)->get('/attendance/list');
 
@@ -599,6 +660,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $this->actingAs($userGeneral)->get('/attendance/list');
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
@@ -647,6 +712,10 @@ class AttendanceTest extends TestCase
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
 
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
+
+
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
 
         $response = $this->actingAs($userGeneral)->post(route('attendance.request', ['id' => $attendance->id,]),
@@ -685,6 +754,9 @@ class AttendanceTest extends TestCase
     public function test_move_to_attendance_details_screen()
     {
         $userGeneral = User::firstWhere('email', 'user@example.com');
+
+        $userGeneral->forceFill(['email_verified_at' => now()])->save();
+        $userGeneral = $userGeneral->fresh();
 
         $attendance = Attendance::where('user_id', $userGeneral->id)->firstOrFail();
 
