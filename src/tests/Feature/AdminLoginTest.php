@@ -23,7 +23,7 @@ class AdminLoginTest extends TestCase
 
         $response = $this->withSession(['url.intended' => '/admin/attendance/list'])->post('/admin/login',[    
             'email'=> "testadmin@example.com",
-            'password' => "password123",
+            'password' => "adminpassword",
         ]);
 
         $response->assertRedirect('/admin/attendance/list');
@@ -34,7 +34,7 @@ class AdminLoginTest extends TestCase
     {
         $response = $this->post('/admin/login', [
             'email' => "",
-            'password' => "password123",
+            'password' => "adminpassword",
         ]);
 
         $response->assertStatus(302);
@@ -62,7 +62,7 @@ class AdminLoginTest extends TestCase
     {
         $response = $this->post('/admin/login', [
             'email' => "test@example.com",
-            'password' => "password123",
+            'password' => "adminpassword",
         ]);
 
         $response->assertStatus(302);

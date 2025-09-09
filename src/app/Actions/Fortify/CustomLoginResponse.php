@@ -13,6 +13,12 @@ class CustomLoginResponse implements LoginResponseContract
         return redirect('/admin/attendance/list');
     }
 
+    $user = $request->user('web');
+    if ($user && ! $user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            return redirect()->route('verification.notice');
+        }
+
     return redirect('/attendance');
 }
 

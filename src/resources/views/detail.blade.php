@@ -82,7 +82,7 @@
                         <div class="detail-form__data">
                             <div class="data__inner">
                                 @if( $approval && $approval->status === 'pending')
-                                    <p class="readonly-field">{{ $attendance->remarks }}</p>
+                                    <p class="readonly-field-remarks">{{ $attendance->remarks }}</p>
                                 @else
                                     <textarea name="remarks" id="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
                                 @endif

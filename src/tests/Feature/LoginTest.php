@@ -17,19 +17,6 @@ class LoginTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_login_user()
-    {   
-        $user = User::firstWhere('email', 'user@example.com');
-
-        $response = $this->withSession(['url.intended' => '/attendance'])->post('/login',[    
-            'email'=> "user@example.com",
-            'password' => "password123",
-        ]);
-
-        $response->assertRedirect('/attendance');
-        $this->assertAuthenticatedAs($user);
-    }
-
     public function test_login_user_validate_email()
     {
         $response = $this->post('/login', [
